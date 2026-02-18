@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বর্ধমান বইমেলা ২০২৬</title>
+    <style>
+        /* CSS দিয়ে ডিজাইন */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background-color: #f9f9f9; color: #333; }
+
+        /* হেডার ও নেভিগেশন */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        header h1 { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+        header p { font-size: 1.5rem; font-weight: 300; }
+
+        /* প্রধান অংশ */
+        .container { max-width: 1100px; margin: -50px auto 50px; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+        .about { text-align: center; margin-bottom: 40px; }
+        .about h2 { color: #d63031; margin-bottom: 15px; font-size: 2rem; }
+        .about p { line-height: 1.8; color: #555; margin-bottom: 10px; }
+
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* বাটন স্টাইলসমূহ */
+        .btn-common {
+            padding: 12px 30px; 
+            text-decoration: none; 
+            border-radius: 25px; 
+            font-weight: bold; 
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-news { background-color: #1e90ff; color: white; animation: pulse-blue 2s infinite; }
+        .btn-gunijon { background-color: #27ae60; color: white; }
+        .btn-history { background-color: #f39c12; color: white; }
+        /* নতুন বাটন স্টাইল */
+        .btn-membership { background-color: #9b59b6; color: white; }
+
+        /* হোভার ইফেক্ট */
+        .btn-common:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); opacity: 0.9; }
+
+        /* খবরের বাটনের জন্য স্পেশাল অ্যানিমেশন */
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(30, 144, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(30, 144, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(30, 144, 255, 0); }
+        }
+
+        /* কার্ড সেকশন */
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px; }
+        .card { background: #fff5f5; padding: 25px; border-radius: 10px; border-left: 5px solid #d63031; transition: 0.3s; text-align: left; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card h3 { margin-bottom: 10px; color: #2d3436; }
+
+        /* ফুটার */
+        footer { text-align: center; padding: 20px; background: #2d3436; color: white; margin-top: 50px; }
+
+        /* হোয়াটসঅ্যাপ বাটন */
+        .wa-float { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; color: white; border-radius: 50px; padding: 12px 25px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; z-index: 1000; }
+        .wa-float:hover { background-color: #128c7e; transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>বর্ধমান বইমেলা ২০২৬</h1>
+        <p>পরিচালনায়ঃ বর্ধমান অভিযান গোষ্ঠী</p>
+        <p>১০৫ তিনকোনিয়া বর্ধমান</p>
+    </header>
+
+    <div class="container">
+        <section class="about">
+            <h2>বইমেলা সম্পর্কে</h2>
+            <p>আমাদের প্রাণের মেলা বর্ধমান বইমেলা। এটি কেবল বই কেনা-বেচার মেলা নয়, এটি আমাদের সংস্কৃতির মিলনমেলা। আপনার পছন্দের লেখক এবং নতুন বইয়ের খোঁজে চলে আসুন উৎসব ময়দান প্রাঙ্গণে।</p>
+            <p><strong>স্থান:</strong> বিরহাটা, পূর্ব বর্ধমান</p>
+
+            <div class="btn-group">
+                <a href="news.html" class="btn-common btn-news">📢 এ বছরের মেলার খবর</a>
+                <a href="gunijon.html" class="btn-common btn-gunijon">বর্ধমানের গুণীজন</a>
+                <a href="history.html" class="btn-common btn-history">মেলার ইতিহাস</a>
+                <a href="membership.html" class="btn-common btn-membership">🎭 সাংস্কৃতিক মঞ্চের সদস্য হন</a>
+            </div>
+        </section>
+
+        <div class="features">
+            <div class="card">
+                <h3>📅 সময়সূচী</h3>
+                <p>প্রতিদিন বেলা ২টা থেকে রাত ৮টা পর্যন্ত।</p>
+            </div>
+            <div class="card">
+                <h3>📍 স্থান</h3>
+                <p>উৎসব ময়দান, বিরহাটা, পূর্ব বর্ধমান</p>
+            </div>
+            <div class="card">
+                <h3>📚 নতুন বই</h3>
+                <p>এ বছর মেলায় এসেছে ৫০০০-এর বেশি নতুন বই। আপনার তালিকা তৈরি করুন এখনই!</p>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/918016957008" class="wa-float" target="_blank">
+        WhatsApp যোগাযোগ
+    </a>
+            
+    <footer>
+        <p>&copy; ২০২৬ বইমেলা কমিটি | সর্বস্বত্ব সংরক্ষিত</p>
+    </footer>
+
+</body>
+</html>

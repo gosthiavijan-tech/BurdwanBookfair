@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিজ্ঞাপন বুকিং - বর্ধমান বইমেলা ২০২৬</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .ad-card { width: 100%; max-width: 500px; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-top: 8px solid #f39c12; }
+        h2 { text-align: center; color: #d35400; margin-bottom: 20px; }
+        .info-bar { background: #fff3e0; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; color: #e67e22; border: 1px solid #ffe0b2; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
+        select { width: 100%; padding: 12px; border: 2px solid #ccc; border-radius: 6px; box-sizing: border-box; background: #fff; }
+        .price-display { background: #fdf2e9; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d35400; margin-top: 10px; border: 1px dashed #d35400; }
+        .btn-container { display: flex; gap: 10px; margin-top: 25px; }
+        .btn { flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; text-align: center; text-decoration: none; }
+        .btn-next { background-color: #f39c12; color: white; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="ad-card">
+    <h2>স্মরণিকা বিজ্ঞাপন</h2>
+    <div class="info-bar">বুকিং আইডি: <span id="display_id">লোড হচ্ছে...</span></div>
+
+    <div class="form-group">
+        <label>বিজ্ঞাপনের ধরন নির্বাচন করুন</label>
+        <select id="ad_type" onchange="updateAdPrice()">
+            <option value="0" data-name="No Ad">বিজ্ঞাপন দিতে ইচ্ছুক নই (₹0)</option>
+            <option value="10000" data-name="Cover Page (Back)">Cover Page (Back) - ₹10,000</option>
+            <option value="8000" data-name="Inside Cover (Front/Back)">Inside Cover (Front/Back) - ₹8,000</option>
+            <option value="5000" data-name="Full Page Color">Full Page Color - ₹5,000</option>
+            <option value="3000" data-name="Half Page Color">Half Page Color - ₹3,000</option>
+            <option value="2000" data-name="Full Page B/W">Full Page B/W - ₹2,000</option>
+        </select>
+    </div>
+
+    <div class="price-display">বিজ্ঞাপন খরচ: ₹ <span id="ad_price_text">0</span></div>
+
+    <div class="btn-container">
+        <button onclick="saveAndGoToPayment()" class="btn btn-next" id="nextBtn">এগিয়ে যান (Next)</button>
+    </div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxBL2ZfWuUIkVxCGXhRsQTPXGMtd0U7JmplckhnXA9ZU5Xk-yfyrgx-2lDJqRrTfLaraA/exec'; 
+    const bookingId = localStorage.getItem('my_booking_id');
+
+    window.onload = () => {
+        if (!bookingId) {
+            alert("বুকিং আইডি পাওয়া যায়নি!");
+            window.location.href = "index.html";
+            return;
+        }
+        document.getElementById('display_id').innerText = bookingId;
+        localStorage.setItem('ad_bill_amount', "0");
+        localStorage.setItem('selected_ad_names', "No Ad");
+    };
+
+    function updateAdPrice() {
+        const select = document.getElementById('ad_type');
+        const adName = select.options[select.selectedIndex].getAttribute('data-name');
+        document.getElementById('ad_price_text').innerText = parseInt(select.value).toLocaleString('en-IN');
+        localStorage.setItem('ad_bill_amount', select.value);
+        localStorage.setItem('selected_ad_names', adName);
+    }
+
+    async function saveAndGoToPayment() {
+        const btn = document.getElementById('nextBtn');
+        btn.innerText = "জমা হচ্ছে... অপেক্ষা করুন";
+        btn.disabled = true;
+
+        const payload = new URLSearchParams();
+        payload.append('form_id', bookingId.trim());
+        payload.append('ad_type', localStorage.getItem('selected_ad_names'));
+
+        try {
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: payload.toString(),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            });
+
+            // ডাটা পৌঁছানোর জন্য ১ সেকেন্ড বিরতি দিয়ে পেমেন্ট পেজে রিডাইরেক্ট
+            setTimeout(() => { 
+                window.location.href = "payment.html"; 
+            }, 1000);
+
+        } catch (err) {
+            alert("Error: ডাটা সেভ হয়নি।");
+            btn.disabled = false;
+            btn.innerText = "এগিয়ে যান (Next)";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>এ বছরের মেলার খবর - বর্ধমান বইমেলা</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; color: #333; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        h1 { color: #1e90ff; border-bottom: 2px solid #1e90ff; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .news-item { background: #e7f3ff; padding: 15px; border-left: 5px solid #1e90ff; margin-bottom: 20px; border-radius: 5px; }
+
+        /* স্টল বুকিং হাইলাইট বক্স */
+        .booking-highlight { 
+            margin: 30px 0; 
+            padding: 25px; 
+            background: #fff5f5; 
+            border: 2px dashed #d32f2f; 
+            border-radius: 10px; 
+            text-align: center;
+        }
+        .booking-highlight h2 { color: #d32f2f; margin-bottom: 10px; }
+        .btn-book-now { 
+            display: inline-block; 
+            margin-top: 15px; 
+            padding: 12px 35px; 
+            background: #d32f2f; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 25px; 
+            font-weight: bold; 
+            transition: 0.3s;
+        }
+        .btn-book-now:hover { background: #b71c1c; transform: scale(1.05); }
+
+        /* বুকিং স্ট্যাটাস সেকশন (গুগল শিট কানেক্টেড) */
+        .search-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .search-box { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        input[type="text"] { padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: 60%; font-size: 16px; }
+        .btn-search { padding: 12px 25px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-search:disabled { background: #ccc; }
+
+        #result-area {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #27ae60;
+            background: #f0fff4;
+            border-radius: 10px;
+            text-align: left;
+            animation: fadeIn 0.5s;
+        }
+	.btn-check-status {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 15px 40px;
+    background: #1e90ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+    transition: 0.3s;
+}
+
+.btn-check-status:hover {
+    background: #1c7ed6;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(30, 144, 255, 0.4);
+}
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .btn-pdf { margin-top: 15px; padding: 10px 20px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .back-link { display: block; margin-top: 30px; text-align: center; text-decoration: none; color: #1e90ff; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📢 মেলার সর্বশেষ খবর ও আপডেট</h1>
+        
+        <div class="news-item">
+            <h3>📅 মেলা শুরুর খবর</h3>
+            <p>আগামী ১০ই জানুয়ারি ২০২৬ থেকে বর্ধমান উৎসব ময়দানে মেলার শুভ উদ্বোধন হবে।</p>
+        </div>
+
+        <div class="news-item">
+            <h3>🌟 বিশেষ আকর্ষণ</h3>
+            <p>এ বছর ৫০০০-এর বেশি নতুন বইয়ের সমাহার থাকবে মেলা প্রাঙ্গণে।</p>
+        </div>
+
+        <div class="booking-highlight">
+            <h2>🏠 স্টল বুকিং শুরু হয়েছে!</h2>
+            <p>আপনি কি এবারের মেলায় স্টল নিতে চান? নিয়মাবলী দেখুন এবং আপনার জায়গাটি নিশ্চিত করুন।</p>
+            <a href="rules.html" class="btn-book-now">বুকিং নিয়মাবলী ও ফরম</a>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee;">
+
+        <div class="search-section" style="background: #eef2f7; border: 2px solid #1e90ff;">
+    <h3>🔍 আপনার বুকিং স্ট্যাটাস চেক করুন</h3>
+    <p style="margin: 10px 0; color: #555;">আপনার স্টল বুকিংয়ের বর্তমান অবস্থা এবং বকেয়া টাকার তথ্য জানতে নিচের বাটনে ক্লিক করুন।</p>
+    
+    <a href="status.html" class="btn-check-status">এখানে ক্লিক করে স্ট্যাটাস দেখুন</a>
+</div>
+
+
+</body>
+</html>

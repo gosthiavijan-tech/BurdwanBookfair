@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বুকিং স্ট্যাটাস - বর্ধমান বইমেলা</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f4f7f9; color: #333; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; }
+        .status-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; }
+        .header h2 { color: #1e90ff; }
+        
+        .search-box { display: flex; gap: 10px; margin-bottom: 25px; }
+        input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; }
+        input:focus { border-color: #1e90ff; }
+        .btn-check { background: #1e90ff; color: white; border: none; padding: 0 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-check:hover { background: #1c7ed6; }
+
+        #result-area { display: none; }
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 13px; }
+        .info-item { background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
+        .info-item span { display: block; color: #777; font-size: 11px; margin-bottom: 4px; font-weight: bold; }
+        .info-item b { color: #333; font-size: 14px; word-break: break-all; }
+        .full-width { grid-column: 1 / -1; }
+        
+        .status-badge { text-align: center; padding: 15px; border-radius: 8px; font-weight: bold; margin: 20px 0; background: #e7fbf3; color: #1db954; font-size: 18px; border: 1px solid #1db954; }
+        
+        .btn-pdf { width: 100%; background: #2c3e50; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+        .btn-pdf:hover { background: #1a252f; transform: translateY(-2px); }
+        .back-home { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: #1e90ff; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="status-card">
+        <div class="header">
+            <h2>🔍 বুকিং স্ট্যাটাস ও রসিদ</h2>
+            <p>আপনার তথ্য যাচাই করুন এবং রসিদ সংগ্রহ করুন</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="bookingID" placeholder="বুকিং আইডি লিখুন (উদাঃ BF26-5217)">
+            <button class="btn-check" onclick="checkStatus()">সার্চ করুন</button>
+        </div>
+
+        <div id="result-area">
+            <div class="data-grid" id="data-display">
+                </div>
+            
+            <div id="res-status" class="status-badge"></div>
+
+            <button class="btn-pdf" onclick="downloadPDF()">
+                📥 প্রফেশনাল রসিদ ডাউনলোড (PDF)
+            </button>
+        </div>
+        <a href="news.html" class="back-home">← ফিরে যান</a>
+    </div>
+</div>
+
+<script>
+    const manualData = {
+        "BF26-5217": { form_id: "BF26-5217", application_date: "16-02-2026", stall_name: "Ananda", address: "Raamchandra pur", proprietor_phone: "9609627316", specification: "Book Stall", area: "200f", stall_rate: 14000, extra_rack_8x6: 1, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 2, extra_chair: 1, extra_light: 2, extra_plug: 1, extra_platform: "No", extra_mat: "Yes", extra_total_amount: 5290, insurance_amount: 150000, grand_total: 19440, advance_amt: 8147, due_amount: 11293, ad_type: "Full Page Color", ad_trx_id: "123123123123", status: "বুকিং নিশ্চিত" },
+	"BF26-2752": { form_id: "BF26-2752", application_date: "16-02-2026", stall_name: "ASHA BOOK STALL", address: "KOLKATA", proprietor_phone: "9609627318", specification: "Book Stall", area: "300f", stall_rate: 21000, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 2, extra_chair: 0, extra_light: 0, extra_plug: 3, extra_platform: "No", extra_mat: "No", insurance_amount: 1500, grand_total: 22500, advance_amt: 8167, due_amount: 16333, ad_type: "Full Page B/W", ad_trx_id: "951236541235", status: "বুকিং নিশ্চিত" },
+	"BF26-6296": { form_id: "BF26-6296", application_date: "16-02-2026", stall_name: "zzzzzzzzzzzzzzzzzzzz", address: "zzzzzzzzzzzzzzzzzzz", proprietor_phone: "zzzzzzzzzzzzzzz", specification: "Book Stall", area: "100f", stall_rate: 7000, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 10000, grand_total: 7030, advance_amt: 5010, due_amount: 2020, ad_type: "Inside Cover (Front/Back)", ad_trx_id: "231456321452", status: "বুকিং নিশ্চিত" },
+	"BF26-3991": { form_id: "BF26-3991", application_date: "15-02-2026", stall_name: "rrrrrrrrrrrrrrrrr", address: "rrrrrrrrrrrrrrrrrr", proprietor_phone: "rrrrrrrrrrrrrrrr", specification: "Book Stall", area: "100f", stall_rate: 7000, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 300000, grand_total: 7030, advance_amt: 0, due_amount: 7030, ad_type: "No Ad", ad_trx_id: "N/A", status: "বুকিং অনিশ্চিত " },
+	"BF26-6895": { form_id: "BF26-6895", application_date: "17-02-2026", stall_name: "অঞ্জন বুক স্টল", address: "নীলাচল, ডিভিসি মোড়, বর্ধমান", proprietor_phone: "9609627316", specification: "Table Space", area: "100f", stall_rate: 1500, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 0, grand_total: 1500, advance_amt: 1167, due_amount: 2333, ad_type: "Full Page B/W", ad_trx_id: "432156987412", status: "বুকিং নিশ্চিত" },
+	"BF26-6596": { form_id: "BF26-6596", application_date: "16-02-2026", stall_name: "dddd", address: "ddddddddddddd", proprietor_phone: "ddddddddddddddd", specification: "Table Space", area: "100f", stall_rate: 1500, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 0, grand_total: 1500, advance_amt: 500, due_amount: 1000, ad_type: "No Ad", ad_trx_id: "321456321452", status: "বুকিং নিশ্চিত" },
+    };
+
+    let currentData = null;
+
+    function checkStatus() {
+        const id = document.getElementById('bookingID').value.trim().toUpperCase();
+        const area = document.getElementById('result-area');
+        const display = document.getElementById('data-display');
+        
+        if (manualData[id]) {
+            currentData = manualData[id];
+            
+            display.innerHTML = `
+                <div class="info-item"><span>আবেদনের তারিখ</span><b>${currentData.application_date}</b></div>
+                <div class="info-item"><span>ফর্ম আইডি</span><b>${currentData.form_id}</b></div>
+                <div class="info-item"><span>ফোন নম্বর</span><b>${currentData.proprietor_phone}</b></div>
+                <div class="info-item full-width"><span>প্রতিষ্ঠানের নাম</span><b>${currentData.stall_name}</b></div>
+                <div class="info-item full-width"><span>ঠিকানা</span><b>${currentData.address}</b></div>
+                <div class="info-item"><span>স্টল টাইপ</span><b>${currentData.specification}</b></div>
+                <div class="info-item"><span>এরিয়া</span><b>${currentData.area}</b></div>
+                
+                <div class="info-item"><span>র‍্যাক (8x6)</span><b>${currentData.extra_rack_8x6} টি</b></div>
+                <div class="info-item"><span>র‍্যাক (6x6)</span><b>${currentData.extra_rack_6x6} টি</b></div>
+                <div class="info-item"><span>র‍্যাক (4x6)</span><b>${currentData.extra_rack_4x6} টি</b></div>
+                
+                <div class="info-item"><span>টেবিল</span><b>${currentData.extra_table} টি</b></div>
+                <div class="info-item"><span>চেয়ার</span><b>${currentData.extra_chair} টি</b></div>
+                <div class="info-item"><span>লাইট</span><b>${currentData.extra_light} টি</b></div>
+                <div class="info-item"><span>প্লাগ পয়েন্ট</span><b>${currentData.extra_plug} টি</b></div>
+                
+                <div class="info-item"><span>প্ল্যাটফর্ম</span><b>${currentData.extra_platform}</b></div>
+                <div class="info-item"><span>ম্যাট (Mat)</span><b>${currentData.extra_mat}</b></div>
+                <div class="info-item"><span>বিজ্ঞাপন</span><b>${currentData.ad_type}</b></div>
+                <div class="info-item"><span>ইন্সুরেন্স</span><b>₹${currentData.insurance_amount}</b></div>
+                
+                <div class="info-item full-width"><span>Transaction ID</span><b>${currentData.ad_trx_id}</b></div>
+                
+                <div class="info-item"><span>মোট বিল</span><b style="color:#2c3e50">₹${currentData.grand_total}</b></div>
+                <div class="info-item"><span>জমা (Paid)</span><b style="color:green">₹${currentData.advance_amt}</b></div>
+                <div class="info-item"><span>বকেয়া (Due)</span><b style="color:red">₹${currentData.due_amount}</b></div>
+            `;
+            
+            document.getElementById('res-status').innerText = "অবস্থা: " + currentData.status;
+            area.style.display = 'block';
+        } else {
+            alert("দুঃখিত! এই আইডিটি খুঁজে পাওয়া যায়নি।");
+            area.style.display = 'none';
+        }
+    }
+
+    function downloadPDF() {
+        if (!currentData) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFillColor(30, 144, 255);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text("BURDWAN BOOK FAIR 2026", 105, 20, null, null, "center");
+        doc.setFontSize(10);
+        doc.text("Official Booking Receipt & Payment Invoice", 105, 30, null, null, "center");
+
+        doc.autoTable({
+            startY: 50,
+            head: [['Description', 'Information']],
+            body: [
+                ['Form ID', currentData.form_id],
+                ['Date', currentData.application_date],
+                ['Organization', currentData.stall_name],
+                ['Address', currentData.address],
+                ['Stall Details', `${currentData.specification} (${currentData.area})`],
+                ['Transaction ID', currentData.ad_trx_id]
+            ],
+            theme: 'striped',
+            headStyles: { fillColor: [44, 62, 80] }
+        });
+
+        doc.autoTable({
+            startY: doc.lastAutoTable.finalY + 10,
+            head: [['Item Name', 'Qty/Status']],
+            body: [
+                ['Extra Rack (8x6)', currentData.extra_rack_8x6],
+                ['Extra Rack (6x6)', currentData.extra_rack_6x6],
+                ['Extra Rack (4x6)', currentData.extra_rack_4x6],
+                ['Extra Table', currentData.extra_table],
+                ['Extra Chair', currentData.extra_chair],
+                ['Extra Light', currentData.extra_light],
+                ['Extra Plug Point', currentData.extra_plug],
+                ['Extra Platform', currentData.extra_platform], // PDF-এ প্ল্যাটফর্ম
+                ['Extra Mat', currentData.extra_mat],          // PDF-এ ম্যাট
+                ['Ad Type', currentData.ad_type],
+                ['Insurance', `INR ${currentData.insurance_amount}`]
+            ],
+            theme: 'grid',
+            styles: { fontSize: 8 }
+        });
+
+        const finalY = doc.lastAutoTable.finalY + 15;
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`GRAND TOTAL: INR ${currentData.grand_total}`, 140, finalY);
+        doc.setTextColor(34, 139, 34);
+        doc.text(`PAID ADVANCE: INR ${currentData.advance_amt}`, 140, finalY + 8);
+        doc.setTextColor(220, 20, 60);
+        doc.text(`DUE AMOUNT: INR ${currentData.due_amount}`, 140, finalY + 16);
+
+        doc.setTextColor(150);
+        doc.setFontSize(8);
+        doc.text("This is a computer-generated invoice. No signature is required.", 105, 285, null, null, "center");
+
+        doc.save(`Invoice_${currentData.form_id}.pdf`);
+    }
+</script>
+
+</body>
+</html>

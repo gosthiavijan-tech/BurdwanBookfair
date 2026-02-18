@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>কালক্রম অনুযায়ী গুণীজন - বর্ধমান</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { 
+            background: #27ae60; color: white; padding: 50px 20px; text-align: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 { font-size: 2rem; margin-bottom: 10px; }
+        p.subtitle { opacity: 0.9; font-style: italic; }
+
+        .container { 
+            max-width: 800px; margin: 40px auto; padding: 20px; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+
+        .era-card { 
+            background: white; padding: 40px 20px; text-align: center;
+            text-decoration: none; color: #2c3e50; border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 5px solid #27ae60;
+            transition: all 0.3s ease; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .era-card:hover { 
+            transform: translateY(-10px); background: #e8f5e9; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .era-card span.year { font-size: 1.4rem; font-weight: bold; color: #27ae60; display: block; margin-bottom: 10px; }
+        .era-card span.title { font-size: 1rem; color: #666; font-weight: 500; }
+
+        .back-home { 
+            text-align: center; margin-top: auto; padding: 40px; 
+        }
+        .back-home a { color: #666; text-decoration: none; font-weight: bold; border-bottom: 1px solid #ccc; }
+
+        /* মোবাইল রেসপন্সিভ */
+        @media (max-width: 600px) {
+            .container { grid-template-columns: 1fr; }
+            header { padding: 30px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>বর্ধমানের স্মরণীয় গুণীজন</h1>
+    <p class="subtitle">ইতিহাসের পাতায় বর্ধমানের রত্নরা</p>
+</header>
+
+<div class="container">
+    <a href="era_1800_1900.html" class="era-card">
+        <span class="year">১৮০০ - ১৯০০</span>
+        <span class="title">রেনেসাঁ যুগ</span>
+    </a>
+
+    <a href="era_1900_1950.html" class="era-card">
+        <span class="year">১৯০০ - ১৯৫০</span>
+        <span class="title">বিপ্লবী ও আধুনিক যুগ</span>
+    </a>
+
+    <a href="era_1950_2000.html" class="era-card">
+        <span class="year">১৯৫০ - ২০০০</span>
+        <span class="title">আধুনিক সাহিত্য ও সংস্কৃতি</span>
+    </a>
+
+    <a href="era_2000_present.html" class="era-card">
+        <span class="year">২০০০ - বর্তমান</span>
+        <span class="title">সমকালীন সাহিত্য ও সমাজ</span>
+    </a>
+</div>
+
+<div class="back-home">
+    <a href="index.html">← মূল পাতায় ফিরে যান</a>
+</div>
+
+</body>
+</html>

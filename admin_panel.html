@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Admin Panel - BAG</title>
+    <style>
+        :root { --p: #6c5ce7; --s: #00b894; --d: #d63031; --bg: #f1f2f6; --dark: #2d3436; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; }
+        .container { max-width: 1450px; margin: auto; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        /* Header */
+        .header { background: var(--p); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .tabs { display: flex; background: #dfe6e9; padding: 5px 20px; gap: 10px; }
+        .tab { padding: 12px 25px; cursor: pointer; border: none; font-weight: bold; background: transparent; transition: 0.3s; }
+        .tab.active { background: white; color: var(--p); border-radius: 5px 5px 0 0; }
+
+        /* Sections */
+        .content-section { padding: 20px; display: none; }
+        .content-section.active { display: block; }
+
+        /* Dot Indicators */
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .alive { background: var(--s); box-shadow: 0 0 8px var(--s); }
+        .dead { background: var(--d); box-shadow: 0 0 8px var(--d); }
+
+        /* Filter Box */
+        .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; align-items: flex-end; }
+        .filter-row div { flex: 1; min-width: 150px; }
+        label { font-size: 12px; font-weight: bold; display: block; margin-bottom: 5px; color: #555; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+
+        /* Member Table */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        th { background: var(--dark); color: white; }
+        .badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; background: #e1f5fe; color: #01579b; }
+
+        /* Buttons */
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-wa { background: #25D366; }
+        .btn-del { background: var(--d); }
+        .btn-edit { background: #0984e3; }
+        
+        #printModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; box-shadow: 0 0 100px rgba(0,0,0,0.3); border-radius: 10px; z-index: 1000; }
+
+        @media print { 
+            .no-print { display: none !important; } 
+            .container { box-shadow: none; } 
+            .p-hide { display: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; }
+            th, td { border: 1px solid #ccc !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h2 style="margin:0;">ADMIN ড্যাশবোর্ড - ২০২৬</h2>
+            <span style="font-size: 12px; opacity: 0.8;">সদস্যপদ ও বকেয়া ব্যবস্থাপনা সিস্টেম</span>
+        </div>
+        <button class="btn no-print" style="background:rgba(255,255,255,0.2)" onclick="logout()">🚪 লগ-আউট</button>
+    </div>
+
+    <div class="tabs no-print">
+        <button class="tab active" id="listTabBtn" onclick="showTab('list')">📋 মেম্বার লিস্ট</button>
+        <button class="tab" id="entryTabBtn" onclick="showTab('entry')">➕ ডাটা এন্ট্রি / এডিট</button>
+    </div>
+
+    <div id="listSection" class="content-section active">
+        <div class="filter-row no-print">
+            <div><label>নাম/ID সার্চ</label><input type="text" id="sName" onkeyup="filter()"></div>
+            <div><label>Alive/Dead</label>
+                <select id="fAlive" onchange="filter()">
+                    <option value="">সব</option>
+                    <option value="Alive">Alive</option>
+                    <option value="Dead">Dead</option>
+                </select>
+            </div>
+            <div><label>স্ট্যাটাস</label>
+                <select id="fStatus" onchange="filter()">
+                    <option value="">সব</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div><label>বকেয়া</label>
+                <select id="fDue" onchange="filter()">
+                    <option value="">সব</option>
+                    <option value="0">বকেয়া নেই</option>
+                    <option value="1">বকেয়া আছে</option>
+                </select>
+            </div>
+            <button class="btn btn-edit" onclick="document.getElementById('printModal').style.display='block'">🖨️ প্রিন্ট চেক-লিস্ট</button>
+            <button class="btn btn-wa" onclick="sendWA()">💬 WhatsApp</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="mainTable">
+                <thead>
+                    <tr>
+                        <th class="no-print"><input type="checkbox" onclick="toggleAll(this)"></th>
+                        <th>ID</th>
+                        <th>নাম ও পদবী</th>
+                        <th>বকেয়া</th>
+                        <th>সদস্যতা</th>
+                        <th>Payment Status</th>
+                        <th>Trx ID / Date</th>
+                        <th>স্ট্যাটাস</th>
+                        <th class="no-print">অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="entrySection" class="content-section">
+        <div class="filter-row" style="background: #fff; border: 1px solid #eee;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; width:100%;">
+                <div><label>ID</label><input type="text" id="id" readonly></div>
+                <div><label>Name</label><input type="text" id="name"></div>
+                <div><label>Alive/Dead</label><select id="aliveDead"><option value="Alive">Alive</option><option value="Dead">Dead</option></select></div>
+                <div><label>Phone</label><input type="text" id="phone"></div>
+                <div><label>Designation</label><input type="text" id="designation"></div>
+                <div><label>Joining Date</label><input type="date" id="joiningDate"></div>
+                <div><label>Last Paid Year</label><input type="number" id="lastPaidYear" onchange="calcDue()"></div>
+                <div><label>Due Years</label><input type="text" id="dueYears" readonly></div>
+                <div><label>Status (Active/Inactive)</label><select id="status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+                <div><label>Bill Book No</label><input type="text" id="billBookNo"></div>
+                <div><label>Payment Status</label><select id="paymentStatus"><option value="Paid">Paid</option><option value="Pending">Pending</option></select></div>
+                <div><label>tns id (Trx ID)</label><input type="text" id="trxId"></div>
+                <div><label>Payment Date</label><input type="date" id="paymentDate"></div>
+                <div><label>Payment Amount</label><input type="number" id="amount"></div>
+                <div style="grid-column: span 2;"><label>Address</label><input type="text" id="address"></div>
+            </div>
+        </div>
+        <button class="btn btn-wa" style="background:var(--s); padding:12px 30px;" id="saveBtn" onclick="save()">💾 ডাটা সেভ করুন</button>
+        <button class="btn" style="background:gray; margin-left:10px;" onclick="resetForm()">বাতিল</button>
+    </div>
+</div>
+
+<div id="printModal" class="no-print">
+    <h3>কি কি প্রিন্ট হবে?</h3>
+    <hr>
+    <label><input type="checkbox" class="col-check" value="1" checked> ID কলাম</label><br>
+    <label><input type="checkbox" class="col-check" value="2" checked> নাম ও পদবী</label><br>
+    <label><input type="checkbox" class="col-check" value="3" checked> বকেয়া</label><br>
+    <label><input type="checkbox" class="col-check" value="4" checked> সদস্যতা সময়কাল</label><br>
+    <label><input type="checkbox" class="col-check" value="5" checked> পেমেন্ট স্ট্যাটাস</label><br>
+    <label><input type="checkbox" class="col-check" value="6" checked> Trx ID / Date</label><br>
+    <label><input type="checkbox" class="col-check" value="7" checked> মেম্বার স্ট্যাটাস</label><br>
+    
+    <div style="margin-top:15px;">
+        <button class="btn btn-wa" onclick="doPrint()">প্রিন্ট</button>
+        <button class="btn btn-del" onclick="document.getElementById('printModal').style.display='none'">বন্ধ</button>
+    </div>
+</div>
+
+<script>
+    // আপনার নতুন Deploy করা গুগল স্ক্রিপ্ট URL এখানে দিন
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyEtw6soXGy_d7g7kyORHMHSX7m5MOnFOZ1DQKbRKQonMtPxE3gUWO9_3gUGVSAnF-ZSQ/exec';
+    let members = [];
+    let curYear = 2026;
+
+    function logout() {
+        if(confirm("আপনি কি লগ-আউট করতে চান?")) {
+            window.location.replace("index.html");
+        }
+    }
+
+    async function load() {
+        try {
+            const r = await fetch(scriptURL + '?type=all');
+            const d = await r.json();
+            members = d.members; 
+            curYear = d.currentYear || 2026;
+            document.getElementById('id').value = d.nextId;
+            render(members);
+        } catch (e) {
+            console.error("Load failed", e);
+        }
+    }
+
+    function render(data) {
+        const b = document.getElementById('tableBody');
+        b.innerHTML = data.map(m => {
+            // সদস্যতার বছর হিসাব
+            let sinceYear = "N/A";
+            if (m.joiningDate) {
+                const jYear = new Date(m.joiningDate).getFullYear();
+                if(!isNaN(jYear)) sinceYear = curYear - jYear;
+            }
+
+            return `
+                <tr data-alive="${m.aliveDead}" data-status="${m.status}" data-due="${m.dueYears}">
+                    <td class="no-print"><input type="checkbox" class="wa-check" data-phone="${m.phone}" data-name="${m.name}"></td>
+                    <td>${m.id}</td>
+                    <td>
+                        <span class="dot ${m.aliveDead === 'Alive' ? 'alive' : 'dead'}"></span>
+                        <b>${m.name}</b> <br> <small style="color:#666">${m.designation || ''}</small>
+                    </td>
+                    <td style="color:${m.dueYears > 0 ? 'red' : 'green'}"><b>${m.dueYears} বছর</b></td>
+                    <td><span class="badge">${sinceYear} বছর ধরে যুক্ত</span></td>
+                    <td><b>${m.paymentStatus || 'N/A'}</b></td>
+                    <td><small>${m.trxId || '-'}<br>${m.paymentDate ? new Date(m.paymentDate).toLocaleDateString('bn-BD') : '-'}</small></td>
+                    <td>${m.status}</td>
+                    <td class="no-print">
+                        <button class="btn btn-edit" style="padding:4px 8px" onclick="edit('${m.id}')">✏️</button>
+                        <button class="btn btn-del" style="padding:4px 8px" onclick="del('${m.id}')">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filter() {
+        const n = document.getElementById('sName').value.toLowerCase();
+        const a = document.getElementById('fAlive').value;
+        const s = document.getElementById('fStatus').value;
+        const d = document.getElementById('fDue').value;
+
+        const f = members.filter(m => {
+            return (m.name.toLowerCase().includes(n) || m.id.toString().includes(n)) &&
+                   (a === "" || m.aliveDead === a) &&
+                   (s === "" || m.status === s) &&
+                   (d === "" || (d == "0" ? m.dueYears == 0 : m.dueYears > 0));
+        });
+        render(f);
+    }
+
+    function edit(id) {
+        const m = members.find(i => i.id.toString() === id.toString());
+        if(!m) return;
+        
+        // ফর্ম ফিল্ডগুলো অটো-ফিল করা
+        document.getElementById('id').value = m.id;
+        document.getElementById('name').value = m.name;
+        document.getElementById('aliveDead').value = m.aliveDead;
+        document.getElementById('phone').value = m.phone;
+        document.getElementById('designation').value = m.designation;
+        document.getElementById('address').value = m.address;
+        
+        if(m.joiningDate) document.getElementById('joiningDate').value = m.joiningDate.split('T')[0];
+        
+        document.getElementById('lastPaidYear').value = m.lastPaidYear;
+        document.getElementById('dueYears').value = m.dueYears;
+        document.getElementById('status').value = m.status;
+        document.getElementById('billBookNo').value = m.billBookNo;
+        document.getElementById('paymentStatus').value = m.paymentStatus || "Pending";
+        document.getElementById('trxId').value = m.trxId;
+        
+        if(m.paymentDate) document.getElementById('paymentDate').value = m.paymentDate.split('T')[0];
+        document.getElementById('amount').value = m.amount;
+
+        document.getElementById('saveBtn').innerText = "🔄 আপডেট করুন";
+        document.getElementById('saveBtn').dataset.action = "edit";
+        showTab('entry');
+        window.scrollTo(0,0);
+    }
+
+    async function save() {
+        const b = document.getElementById('saveBtn');
+        const act = b.dataset.action || "add";
+        const p = { action: act };
+        
+        // ইনপুট থেকে ডাটা সংগ্রহ
+        document.querySelectorAll('#entrySection input, #entrySection select').forEach(i => p[i.id] = i.value);
+        
+        if(!p.name) return alert("নাম অবশ্যই দিতে হবে!");
+
+        b.innerText = "প্রসেসিং...";
+        b.disabled = true;
+        
+        try {
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                body: JSON.stringify(p) 
+            });
+            alert("সফলভাবে সম্পন্ন হয়েছে!"); 
+            location.reload();
+        } catch (e) {
+            alert("ত্রুটি হয়েছে! আবার চেষ্টা করুন।");
+            b.disabled = false;
+            b.innerText = "💾 ডাটা সেভ করুন";
+        }
+    }
+
+    async function del(id) {
+        if(confirm("আপনি কি নিশ্চিতভাবে এই মেম্বারকে ডিলিট করতে চান?")) {
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                body: JSON.stringify({action: 'delete', id: id}) 
+            });
+            location.reload();
+        }
+    }
+
+    function calcDue() {
+        const y = parseInt(document.getElementById('lastPaidYear').value);
+        if(!isNaN(y)) {
+            document.getElementById('dueYears').value = Math.max(0, curYear - y);
+        }
+    }
+
+    function showTab(t) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.getElementById(t + 'Section').classList.add('active');
+        document.getElementById(t + 'TabBtn').classList.add('active');
+    }
+
+    function sendWA() {
+        const sel = document.querySelectorAll('.wa-check:checked');
+        if(!sel.length) return alert("মেম্বার সিলেক্ট করুন");
+        const msg = prompt("মেসেজটি লিখুন:");
+        if(!msg) return;
+        sel.forEach(c => {
+            const phone = c.dataset.phone;
+            const name = c.dataset.name;
+            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent("নমস্কার " + name + ",\n" + msg)}`, '_blank');
+        });
+    }
+
+    function resetForm() {
+        location.reload();
+    }
+
+    function doPrint() {
+    const table = document.getElementById('mainTable');
+    const rows = table.rows;
+
+    // প্রথমে সব কলাম থেকে p-hide ক্লাস সরিয়ে ফেলা (রিসেট করা)
+    for (let i = 0; i < rows.length; i++) {
+        for (let j = 0; j < rows[i].cells.length; j++) {
+            rows[i].cells[j].classList.remove('p-hide');
+        }
+    }
+
+    // চেকবক্স অনুযায়ী কলাম হাইড করা
+    const checkboxes = document.querySelectorAll('.col-check');
+    checkboxes.forEach(cb => {
+        if (!cb.checked) {
+            const colIndex = parseInt(cb.value);
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].cells[colIndex]) {
+                    rows[i].cells[colIndex].classList.add('p-hide');
+                }
+            }
+        }
+    });
+
+    // অ্যাকশন কলাম (শেষ কলাম) প্রিন্ট করার সময় সব সময় হাইড থাকবে
+    for (let i = 0; i < rows.length; i++) {
+        const lastCellIndex = rows[i].cells.length - 1;
+        rows[i].cells[lastCellIndex].classList.add('p-hide');
+    }
+
+    document.getElementById('printModal').style.display = 'none';
+    window.print();
+
+    }
+
+    function toggleAll(s) { 
+        document.querySelectorAll('.wa-check').forEach(c => c.checked = s.checked); 
+    }
+
+    window.onload = load;
+</script>
+</body>
+</html>

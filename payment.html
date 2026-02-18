@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পেমেন্ট - বর্ধমান বইমেলা</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #f4f7f6; padding: 20px; }
+        .payment-card { max-width: 500px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 8px solid #27ae60; }
+        .info-header { text-align: center; background: #e8f5e9; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #c8e6c9; }
+        .price-row { display: flex; justify-content: space-between; margin: 8px 0; font-weight: bold; }
+        .total-row { border-top: 2px solid #27ae60; padding-top: 10px; color: #d35400; font-size: 1.2em; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #2c3e50; }
+        input[type="number"], input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .qr-container { text-align: center; background: #fff; padding: 15px; border: 2px dashed #27ae60; border-radius: 12px; margin: 20px 0; display: none; }
+        .warning-box { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; margin-top: 5px; border: 1px solid #ffeeba; }
+        .btn-submit { width: 100%; background: #27ae60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="payment-card">
+    <div class="info-header">
+        <h3 style="margin:0; color: #1b5e20;">বুকিং আইডি: <span id="p_id">---</span></h3>
+        <div class="price-row"><span>স্টল খরচ:</span> <span id="p_stall">₹ 0</span></div>
+        <div class="price-row"><span>বিজ্ঞাপন খরচ:</span> <span id="p_ad">₹ 0</span></div>
+        <div class="price-row total-row"><span>মোট প্রদেয়:</span> <span id="p_grand">₹ 0</span></div>
+    </div>
+
+    <form id="paymentForm">
+        <div class="form-group">
+            <label>জমার পরিমাণ (INR) * <br><small style="font-weight:normal;">(১/৩ ভাগের কম বা মোট টাকার বেশি দেওয়া যাবে না)</small></label>
+            <input type="number" id="pay_amt" placeholder="টাকার অঙ্ক লিখুন" required oninput="validateAmount()">
+            <div id="msg" class="warning-box">টাকার পরিমাণ যাচাই করা হচ্ছে...</div>
+        </div>
+
+        <div id="qr_section" class="qr-container">
+            <p style="margin-top:0; font-weight:bold; color:#27ae60;">নিচের QR কোডটি স্ক্যান করুন</p>
+            <div id="qrcode" style="display: inline-block;"></div>
+            <p style="margin-bottom:0; font-size:14px;">UPI ID: <strong>8016957008@upi</strong></p>
+        </div>
+
+        <div class="form-group">
+            <label>Transaction ID / UTR Number *</label>
+            <input type="text" id="trx_id" placeholder="সঠিক আইডি টা লিখুন" required>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit" disabled>আবেদন সম্পন্ন করুন</button>
+    </form>
+</div>
+
+<script>
+    // আপনার নতুন Deployment URL এখানে বসান
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxBL2ZfWuUIkVxCGXhRsQTPXGMtd0U7JmplckhnXA9ZU5Xk-yfyrgx-2lDJqRrTfLaraA/exec'; 
+    let qrcode = new QRCode(document.getElementById("qrcode"), { width: 180, height: 180 });
+    
+    let grandTotal = 0;
+    let minAllowed = 0;
+    const bid = localStorage.getItem('my_booking_id');
+
+    window.onload = function() {
+        if (!bid) {
+            alert("বুকিং আইডি পাওয়া যায়নি! প্রথম থেকে শুরু করুন।");
+            window.location.href = "index.html";
+            return;
+        }
+        const stallBill = parseFloat(localStorage.getItem('last_bill_amount')) || 0;
+        const adBill = parseFloat(localStorage.getItem('ad_bill_amount')) || 0;
+        
+        grandTotal = stallBill + adBill;
+        minAllowed = Math.ceil(grandTotal / 3);
+
+        document.getElementById('p_id').innerText = bid;
+        document.getElementById('p_stall').innerText = "₹ " + stallBill;
+        document.getElementById('p_ad').innerText = "₹ " + adBill;
+        document.getElementById('p_grand').innerText = "₹ " + grandTotal;
+        
+        document.getElementById('pay_amt').value = minAllowed;
+        validateAmount();
+    };
+
+    function validateAmount() {
+        const payAmt = parseFloat(document.getElementById('pay_amt').value) || 0;
+        const qrSection = document.getElementById('qr_section');
+        const submitBtn = document.getElementById('submitBtn');
+        const msg = document.getElementById('msg');
+
+        if (payAmt >= minAllowed && payAmt <= grandTotal) {
+            qrSection.style.display = "block";
+            submitBtn.disabled = false;
+            msg.style.display = "none";
+            updateQR(payAmt);
+        } else {
+            qrSection.style.display = "none";
+            submitBtn.disabled = true;
+            msg.style.display = "block";
+            msg.innerText = payAmt < minAllowed ? `কমপক্ষে ₹${minAllowed} দিতে হবে।` : `সর্বোচ্চ ₹${grandTotal} এর বেশি হবে না।`;
+        }
+    }
+
+    function updateQR(amt) {
+        qrcode.makeCode(`upi://pay?pa=8016957008@upi&pn=BardhamanBookFair&am=${amt}&cu=INR`);
+    }
+
+    document.getElementById('paymentForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "অপেক্ষা করুন...";
+        btn.disabled = true;
+
+        const payAmt = document.getElementById('pay_amt').value;
+        const dueAmt = (grandTotal - parseFloat(payAmt)).toFixed(2);
+        const trxId = document.getElementById('trx_id').value;
+
+        // ডাটা সরাসরি URL কুয়েরি স্ট্রিং হিসেবে পাঠানো হচ্ছে (বডি ছাড়া)
+        const finalSubmitURL = scriptURL + "?form_id=" + encodeURIComponent(bid) + 
+                               "&advance_amt=" + encodeURIComponent(payAmt) + 
+                               "&due_amt=" + encodeURIComponent(dueAmt) + 
+                               "&ad_trx_id=" + encodeURIComponent(trxId);
+
+        try {
+            // mode: 'no-cors' দিয়ে সরাসরি রিকোয়েস্ট
+            await fetch(finalSubmitURL, { method: 'POST', mode: 'no-cors' });
+            
+            alert("ধন্যবাদ! পেমেন্ট তথ্য সফলভাবে জমা হয়েছে।");
+            localStorage.clear();
+            window.location.href = "index.html";
+
+        } catch (err) {
+            alert("ত্রুটি: " + err.message);
+            btn.disabled = false;
+            btn.innerText = "আবেদন সম্পন্ন করুন";
+        }
+    };
+</script>
+</body>
+</html>
