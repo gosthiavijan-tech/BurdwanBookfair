@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অনুষ্ঠান সূচি - বর্ধমান বইমেলা</title>
+    <style>
+        :root { 
+            --primary-blue: #004a99; 
+            --secondary-blue: #0056b3;
+            --accent-orange: #f39c12; 
+            --bg-color: #f4f7f6; 
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-color); 
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        .container { 
+            max-width: 900px; 
+            margin: auto; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+        }
+
+        /* হেডার ব্যানার ডিজাইন */
+        .header-banner {
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: var(--primary-blue);
+        }
+
+        .subtitle { font-size: 1.1rem; font-weight: bold; margin: 0; }
+
+        .main-title-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .edition {
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .edition .number { font-size: 1.8rem; font-weight: bold; }
+        .edition .text { font-size: 0.9rem; }
+
+        .main-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            color: var(--secondary-blue);
+            font-weight: 900;
+        }
+
+        .management { font-weight: bold; border-bottom: 1px dashed var(--primary-blue); display: inline-block; padding-bottom: 5px; margin-bottom: 10px; }
+
+        .contact-info { margin-bottom: 10px; font-size: 0.95rem; font-weight: bold; }
+
+        .date-range {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: bold;
+            color: var(--secondary-blue);
+            margin: 10px 0;
+        }
+
+        .stage-name {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            text-decoration: underline;
+            margin-top: 10px;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        /* ইভেন্ট লিস্ট স্টাইল */
+        .day-box { 
+            margin-bottom: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            overflow: hidden; 
+        }
+
+        .day-header { 
+            background: var(--primary-blue); 
+            color: white; 
+            padding: 12px 15px; 
+            font-weight: bold; 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-header .date-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .event-list { padding: 5px 15px; background: #fff; }
+
+        .event-item { 
+            display: flex; 
+            padding: 15px 0; 
+            border-bottom: 1px dashed #eee; 
+            align-items: flex-start;
+        }
+
+        .event-item:last-child { border: none; }
+
+        .time { 
+            color: var(--accent-orange); 
+            font-weight: bold; 
+            min-width: 100px; 
+            font-size: 0.95rem;
+        }
+
+        .topic { 
+            flex: 1; 
+            margin-left: 15px; 
+            color: #444; 
+            line-height: 1.6;
+        }
+
+        .back-btn { 
+            display: inline-block; 
+            margin-bottom: 15px; 
+            text-decoration: none; 
+            color: var(--primary-blue); 
+            font-weight: bold; 
+        }
+
+        @media (max-width: 600px) {
+            .event-item { flex-direction: column; }
+            .time { margin-bottom: 5px; }
+            .topic { margin-left: 0; }
+            .day-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="news.html" class="back-btn">⬅ ফিরে যান</a>
+
+    <div class="header-banner">
+        <p class="subtitle">আসুন বইমেলার মাঠে, জমজমাট বই-এর হাটে</p>
+        <div class="main-title-box">
+            <div class="edition">
+                <span class="number">৪৯</span>
+                <span class="text">তম</span>
+            </div>
+            <h1 class="main-title">বর্ধমান বইমেলা</h1>
+        </div>
+        <p class="management">পরিচালনায়ঃ বর্ধমান অভিযান গোষ্ঠী, স্থানঃ উৎসব ময়দান</p>
+        <div class="contact-info">
+            মোঃ- ৮০১৬১০০২০৪, ৭৯৮০৩১১২৮৪, ৯১১৮৮৭৫৭২৮, ৮০১৬৯৬৭০০৮
+        </div>
+        <div class="date-range">
+            ০৩ জানুয়ারি ২০২৬ থেকে ১২ জানুয়ারি ২০২৬
+        </div>
+        
+        <div class="stage-name">
+            মাইকেল মধুসূদন দত্ত মঞ্চ <br> 
+            <span style="display: inline-block; margin-top: 5px;">অনুষ্ঠানসূচী</span>
+        </div>
+    </div>
+
+    <div id="event-container">
+        <p style="text-align: center; color: #666;">লোড হচ্ছে...</p>
+    </div>
+</div>
+
+<script>
+    const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzsSqmMwA9bDiUqG0viJkxq3iPZ-kLgENmx95pFOHhKNQW6hAmuRhNk9MYysNpRrkcjww/exec';
+
+    function getBengaliDayAndDate(dateStr) {
+        if (!dateStr) return { date: "", dayName: "" };
+
+        let date;
+        if (dateStr.includes('/')) {
+            const parts = dateStr.split('/');
+            date = new Date(parts[2], parts[1] - 1, parts[0]);
+        } else {
+            date = new Date(dateStr);
+        }
+
+        if (isNaN(date.getTime())) return { date: dateStr, dayName: "" };
+
+        const dateString = date.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+        const dayName = date.toLocaleDateString('bn-BD', { weekday: 'long' });
+
+        return { date: dateString, dayName: dayName };
+    }
+
+    async function fetchEvents() {
+        try {
+            const response = await fetch(SHEETS_API_URL, { redirect: "follow" });
+            const data = await response.json();
+            const container = document.getElementById('event-container');
+            container.innerHTML = ''; 
+
+            let currentDay = "";
+            let html = "";
+
+            data.forEach(item => {
+                if (item.day !== currentDay) {
+                    if (currentDay !== "") html += `</div></div>`; 
+                    currentDay = item.day;
+                    
+                    const info = getBengaliDayAndDate(item.day);
+                    
+                    html += `
+                    <div class="day-box">
+                        <div class="day-header">
+                            <div class="date-info">
+                                <span>${info.date}</span>
+                                ${info.dayName ? `<span class="weekday" style="background: rgba(255, 255, 255, 0.2); padding: 2px 10px; border-radius: 5px; font-size: 0.9rem; margin-left:10px;">${info.dayName}</span>` : ''}
+                            </div>
+                            <span style="font-size: 0.9rem; opacity: 0.9;">${item.header || ''}</span>
+                        </div>
+                        <div class="event-list">`;
+                }
+
+                html += `
+                    <div class="event-item">
+                        <span class="time">${item.time}</span> 
+                        <span class="topic">${item.topic}</span>
+                    </div>`;
+            });
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('event-container').innerHTML = `<p style="text-align:center; color:red;">লোড করতে সমস্যা হয়েছে।</p>`;
+        }
+    }
+
+    fetchEvents();
+</script>
+</body>
+</html>

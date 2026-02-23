@@ -18,6 +18,16 @@
         .warning-box { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; margin-top: 5px; border: 1px solid #ffeeba; }
         .btn-submit { width: 100%; background: #27ae60; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+#upi_pay_link:hover {
+    background-color: #1557b0;
+    transform: scale(1.02);
+}
+
+@media screen and (min-width: 601px) {
+    #upi_pay_link {
+        display: none !important; /* কম্পিউটার থেকে দেখলে বাটনটি লুকানো থাকবে, কারণ কম্পিউটারে UPI অ্যাপ থাকে না */
+    }
+}
     </style>
 </head>
 <body>
@@ -38,14 +48,21 @@
         </div>
 
         <div id="qr_section" class="qr-container">
-            <p style="margin-top:0; font-weight:bold; color:#27ae60;">নিচের QR কোডটি স্ক্যান করুন</p>
-            <div id="qrcode" style="display: inline-block;"></div>
-            <p style="margin-bottom:0; font-size:14px;">UPI ID: <strong>8016957008@upi</strong></p>
-        </div>
+    <p style="margin-top:0; font-weight:bold; color:#27ae60;">নিচের QR কোডটি স্ক্যান করুন</p>
+    <div id="qrcode" style="display: inline-block;"></div>
+    
+    <div style="margin: 15px 0;">
+        <a id="upi_pay_link" href="#" class="btn-submit" style="display: inline-block; background: #1a73e8; text-decoration: none; padding: 10px 20px; font-size: 16px;">
+            মোবাইল অ্যাপ দিয়ে পেমেন্ট করুন
+        </a>
+    </div>
+
+    <p style="margin-bottom:0; font-size:14px;">UPI ID: <strong>8016957008@upi</strong></p>
+</div>
 
         <div class="form-group">
             <label>Transaction ID / UTR Number *</label>
-            <input type="text" id="trx_id" placeholder="সঠিক আইডি টা লিখুন" required>
+            <input type="text" id="trx_id_input" placeholder="সঠিক আইডি টা লিখুন" required>
         </div>
 
         <button type="submit" id="submitBtn" class="btn-submit" disabled>আবেদন সম্পন্ন করুন</button>
@@ -53,8 +70,7 @@
 </div>
 
 <script>
-    // আপনার নতুন Deployment URL এখানে বসান
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxBL2ZfWuUIkVxCGXhRsQTPXGMtd0U7JmplckhnXA9ZU5Xk-yfyrgx-2lDJqRrTfLaraA/exec'; 
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzPOZqkgRYJ85NSkSN0lODTt2ODc6CAlOWqjAM_7zjl7acrPq7aJ_h2S2FoQPRhgphPlw/exec'; 
     let qrcode = new QRCode(document.getElementById("qrcode"), { width: 180, height: 180 });
     
     let grandTotal = 0;
@@ -63,20 +79,21 @@
 
     window.onload = function() {
         if (!bid) {
-            alert("বুকিং আইডি পাওয়া যায়নি! প্রথম থেকে শুরু করুন।");
-            window.location.href = "index.html";
+            alert("বুকিং আইডি পাওয়া যায়নি! প্রথম থেকে শুরু করুন।");
+            window.location.href = "stallbooking.html";
             return;
         }
+        
         const stallBill = parseFloat(localStorage.getItem('last_bill_amount')) || 0;
-        const adBill = parseFloat(localStorage.getItem('ad_bill_amount')) || 0;
+        const adBill = parseFloat(localStorage.getItem('selected_ad_price')) || 0;
         
         grandTotal = stallBill + adBill;
         minAllowed = Math.ceil(grandTotal / 3);
 
         document.getElementById('p_id').innerText = bid;
-        document.getElementById('p_stall').innerText = "₹ " + stallBill;
-        document.getElementById('p_ad').innerText = "₹ " + adBill;
-        document.getElementById('p_grand').innerText = "₹ " + grandTotal;
+        document.getElementById('p_stall').innerText = "₹ " + stallBill.toLocaleString('en-IN');
+        document.getElementById('p_ad').innerText = "₹ " + adBill.toLocaleString('en-IN');
+        document.getElementById('p_grand').innerText = "₹ " + grandTotal.toLocaleString('en-IN');
         
         document.getElementById('pay_amt').value = minAllowed;
         validateAmount();
@@ -102,35 +119,51 @@
     }
 
     function updateQR(amt) {
-        qrcode.makeCode(`upi://pay?pa=8016957008@upi&pn=BardhamanBookFair&am=${amt}&cu=INR`);
+        const upiUri = `upi://pay?pa=8016957008@upi&pn=BardhamanBookFair&am=${amt}&cu=INR`;
+        qrcode.makeCode(upiUri);
+        const payLink = document.getElementById('upi_pay_link');
+        payLink.href = upiUri;
     }
 
     document.getElementById('paymentForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        btn.innerText = "অপেক্ষা করুন...";
+        btn.innerText = "জমা হচ্ছে... অপেক্ষা করুন";
         btn.disabled = true;
 
         const payAmt = document.getElementById('pay_amt').value;
         const dueAmt = (grandTotal - parseFloat(payAmt)).toFixed(2);
-        const trxId = document.getElementById('trx_id').value;
+        const trxId = document.getElementById('trx_id_input').value;
+        const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY ফরম্যাট
 
-        // ডাটা সরাসরি URL কুয়েরি স্ট্রিং হিসেবে পাঠানো হচ্ছে (বডি ছাড়া)
-        const finalSubmitURL = scriptURL + "?form_id=" + encodeURIComponent(bid) + 
-                               "&advance_amt=" + encodeURIComponent(payAmt) + 
-                               "&due_amt=" + encodeURIComponent(dueAmt) + 
-                               "&ad_trx_id=" + encodeURIComponent(trxId);
+        // ডাটা আপডেট করার জন্য প্যারামিটার তৈরি
+        const queryParams = new URLSearchParams({
+            form_id: bid.trim(),
+            advance_pay: payAmt,
+            due_bill: dueAmt,
+            trx_id: trxId,
+            trx_date: today,
+            booking_status: 'Pending'
+        });
 
         try {
-            // mode: 'no-cors' দিয়ে সরাসরি রিকোয়েস্ট
-            await fetch(finalSubmitURL, { method: 'POST', mode: 'no-cors' });
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                cache: 'no-cache',
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: queryParams.toString()
+            });
             
-            alert("ধন্যবাদ! পেমেন্ট তথ্য সফলভাবে জমা হয়েছে।");
-            localStorage.clear();
-            window.location.href = "index.html";
+            // ডাটাবেসে আপডেট হতে কিছুটা সময় লাগে, তাই ১.৫ সেকেন্ড বিরতি
+            setTimeout(() => {
+                alert("ধন্যবাদ! আপনার  তথ্য সফলভাবে জমা হয়েছে।কিছু সমস্যা হলে আমাদের ওয়েব সাইটের দেওয়া হোয়াটস আপ নাম্বারে মেসেজ করুন।");
+                localStorage.clear();
+                window.location.href = "news.html";
+            }, 1500);
 
         } catch (err) {
-            alert("ত্রুটি: " + err.message);
+            alert("ত্রুটি: সার্ভারে কানেক্ট করা যাচ্ছে না। আবার চেষ্টা করুন।");
             btn.disabled = false;
             btn.innerText = "আবেদন সম্পন্ন করুন";
         }

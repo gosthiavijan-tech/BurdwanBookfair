@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAG - মেম্বার পোর্টাল</title>
+    <title>মেম্বার পোর্টাল</title>
     <style>
         :root { --primary: #9b59b6; --success: #2ecc71; --bg: #f0f2f5; --danger: #e74c3c; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -22,6 +22,10 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
         
+        /* নতুন সদস্য বার্তার স্টাইল */
+        .notice-box { background: #fff3e0; color: #e65100; padding: 15px; border-radius: 10px; border: 1px solid #ffe0b2; margin: 20px 0; font-size: 14px; line-height: 1.5; text-align: center; }
+        .notice-box b { color: #bf360c; }
+
         .info-card { background: #f9f0ff; padding: 15px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-size: 14px; line-height: 1.6; }
         .thanks-box { background: #e8f5e9; color: #2e7d32; padding: 20px; border-radius: 10px; text-align: center; font-weight: bold; border: 1px solid #c8e6c9; margin-top: 15px; }
 
@@ -45,13 +49,18 @@
     <h2>বর্ধমান অভিযান গোষ্ঠী</h2>
     
     <div class="main-nav">
-        <button class="nav-btn active" id="btnRenew" onclick="showTab('renew')">নবায়ন</button>
+        <button class="nav-btn active" id="btnRenew" onclick="showTab('renew')">পুনর্নবীকরণ</button>
         <button class="nav-btn" id="btnReceipt" onclick="showTab('download')">রসিদ</button>
+    </div>
+
+    <div class="notice-box">
+        📢 <b>নতুন সদস্য হওয়ার জন্য</b> বর্ধমান অভিযান গোষ্ঠীর অফিসে যোগাযোগ করুন।<br>
+        🏠 ঠিকানা: <b>১০৫ তিনকোনিয়া জি. টি. রোড, বর্ধমান ৭১৩১০১।</b>
     </div>
 
     <div id="renewTab" class="section active">
         <input type="text" id="renewId" placeholder="আপনার মেম্বার আইডি দিন">
-        <button class="btn-block btn-primary" onclick="searchForRenew()">বকেয়া চেক করুন</button>
+        <button class="btn-block btn-primary" onclick="searchForRenew()">বকেয়া চেক করুন</button>
         <div id="renewResult"></div>
         
         <div id="paymentArea" style="display:none; margin-top: 20px;">
@@ -113,29 +122,28 @@
         try {
             const response = await fetch(`${scriptURL}?type=all`);
             const data = await response.json();
-            // শিটের আইডি কলামের সাথে ম্যাচ করা হচ্ছে
             currentMember = data.members.find(m => m.id.toString().toLowerCase() === id.toLowerCase());
 
             if(!currentMember) {
-                resDiv.innerHTML = "<p style='color:red;'>দুঃখিত, এই আইডি পাওয়া যায়নি!</p>";
+                resDiv.innerHTML = "<p style='color:red;'>দুঃখিত, এই আইডি পাওয়া যায়নি!</p>";
             } else {
                 let html = `
                     <div class="info-card">
                         <p>👤 <b>নাম:</b> ${currentMember.name}</p>
                         <p>📍 <b>ঠিকানা:</b> ${currentMember.address || 'N/A'}</p>
                         <p>🎖️ <b>পদবী:</b> ${currentMember.designation || 'N/A'}</p>
-                        <p>⏳ <b>বকেয়া:</b> ${currentMember.dueYears} বছর</p>
-                        <p style="color:var(--primary); font-size:18px;">💰 <b>মোট বকেয়া: ₹${currentMember.dueYears * 200}</b></p>
+                        <p>⏳ <b>বকেয়া:</b> ${currentMember.dueYears} বছর</p>
+                        <p style="color:var(--primary); font-size:18px;">💰 <b>মোট বকেয়া: ₹${currentMember.dueYears * 200}</b></p>
                     </div>`;
                 
                 if(currentMember.dueYears > 0) {
                     html += `<button class="btn-block btn-success" onclick="document.getElementById('paymentArea').style.display='block'">পেমেন্ট করতে এখানে ক্লিক করুন</button>`;
                 } else {
-                    html += `<div class="thanks-box">ধন্যবাদ, আপনার কোনো বকেয়া নেই। "রসিদ" ট্যাব থেকে আপনার রসিদ সংগ্রহ করুন।</div>`;
+                    html += `<div class="thanks-box">ধন্যবাদ, আপনার কোনো বকেয়া নেই। "রসিদ" ট্যাব থেকে আপনার রসিদ সংগ্রহ করুন।</div>`;
                 }
                 resDiv.innerHTML = html;
             }
-        } catch (e) { resDiv.innerHTML = "সার্ভার এরর! দয়া করে পরে চেষ্টা করুন।"; }
+        } catch (e) { resDiv.innerHTML = "সার্ভার এরর! দয়া করে পরে চেষ্টা করুন।"; }
     }
 
     async function submitPayment() {
@@ -156,10 +164,10 @@
                     trxId: trx 
                 }) 
             });
-            alert("সফল! আপনার পেমেন্ট তথ্য জমা হয়েছে। অ্যাডমিন ভেরিফাই করলে রসিদ পাবেন।");
+            alert("সফল! আপনার পেমেন্ট তথ্য জমা হয়েছে। অ্যাডমিন ভেরিফাই করলে রসিদ পাবেন।");
             location.reload();
         } catch (e) {
-            alert("ত্রুটি হয়েছে!");
+            alert("ত্রুটি হয়েছে!");
             btn.disabled = false;
             btn.innerText = "পেমেন্ট তথ্য সাবমিট করুন";
         }
@@ -177,9 +185,9 @@
             const m = data.members.find(m => m.id.toString().toLowerCase() === id.toLowerCase());
 
             if(!m) {
-                resDiv.innerHTML = "<p style='color:red;'>আইডি পাওয়া যায়নি!</p>";
+                resDiv.innerHTML = "<p style='color:red;'>আইডি পাওয়া যায়নি!</p>";
             } else if (!m.trxId || m.trxId.toString().trim() === "") {
-                resDiv.innerHTML = "<p style='color:red;'>কোনো পেমেন্ট তথ্য পাওয়া যায়নি। আগে নবায়ন করুন।</p>";
+                resDiv.innerHTML = "<p style='color:red;'>কোনো পেমেন্ট তথ্য পাওয়া যায়নি। আগে নবায়ন করুন।</p>";
             } else {
                 resDiv.innerHTML = `
                     <div class="info-card">
@@ -214,13 +222,13 @@
     }
 
     function adminLogin() {
-        const pass = prompt("অ্যাডমিন পাসওয়ার্ড দিন:");
+        const pass = prompt("অ্যাডমিন পাসওয়ার্ড দিন:");
         if (pass === "1234") { 
             window.location.href = "admin_panel.html";
         } else if (pass != null) {
-            alert("ভুল পাসওয়ার্ড!");
+            alert("ভুল পাসওয়ার্ড!");
         }
     }
-</script>
+</script> 
 </body>
 </html>

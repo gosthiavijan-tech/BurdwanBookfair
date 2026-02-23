@@ -3,187 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>বুকিং স্ট্যাটাস - বর্ধমান বইমেলা</title>
+    <title>বর্ধমান বইমেলা ২০২৬ - অ্যাডভান্সড বুকিং সিস্টেম</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f4f7f9; color: #333; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; }
-        .status-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; }
-        .header h2 { color: #1e90ff; }
+        :root { --primary: #d32f2f; --secondary: #2c3e50; --bg: #f0f2f5; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: var(--bg); padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--primary); }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--primary); font-size: 24px; margin-bottom: 5px; }
         
-        .search-box { display: flex; gap: 10px; margin-bottom: 25px; }
-        input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; }
-        input:focus { border-color: #1e90ff; }
-        .btn-check { background: #1e90ff; color: white; border: none; padding: 0 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-check:hover { background: #1c7ed6; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 25px; background: #fff1f1; padding: 15px; border-radius: 8px; }
+        input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; }
+        .btn-search { background: var(--primary); color: white; border: none; padding: 0 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
         #result-area { display: none; }
-        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 13px; }
-        .info-item { background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
-        .info-item span { display: block; color: #777; font-size: 11px; margin-bottom: 4px; font-weight: bold; }
-        .info-item b { color: #333; font-size: 14px; word-break: break-all; }
-        .full-width { grid-column: 1 / -1; }
-        
-        .status-badge { text-align: center; padding: 15px; border-radius: 8px; font-weight: bold; margin: 20px 0; background: #e7fbf3; color: #1db954; font-size: 18px; border: 1px solid #1db954; }
-        
-        .btn-pdf { width: 100%; background: #2c3e50; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-        .btn-pdf:hover { background: #1a252f; transform: translateY(-2px); }
-        .back-home { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: #1e90ff; font-weight: bold; }
+        .section-title { background: var(--secondary); color: white; padding: 8px 15px; border-radius: 4px; margin: 20px 0 10px; font-size: 15px; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+        .item { background: #f9f9f9; padding: 10px; border: 1px solid #eee; border-radius: 6px; }
+        .item span { display: block; font-size: 11px; color: #777; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
+        .item b { font-size: 14px; color: #222; word-break: break-all; }
+        .full { grid-column: 1 / -1; }
+
+        .status-box { text-align: center; margin: 20px 0; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; border: 2px solid #ccc; }
+        .Approved { color: #1b5e20; background: #e8f5e9; border-color: #4caf50; }
+        .Pending { color: #e65100; background: #fff3e0; border-color: #ff9800; }
+
+        .btn-download { width: 100%; background: var(--secondary); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .btn-download:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
+<div id="invoice-template" style="display: none; position: absolute; left: -9999px;">
+    <div style="width: 800px; padding: 30px; background: white; color: black; font-family: Arial, sans-serif; border: 1px solid #000;">
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+            <h1 style="margin: 0; color: #d32f2f;">BURDWAN BOOK FAIR</h1>
+            <p>Organised By: <b>Burdwan Avijan Gosthi</b></p>
+            <p>49th years, 01-11-2026 To 10-11-2026</b></p>
+            <h3>OFFICIAL BOOKING INVOICE</h3>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+            <tr>
+                <td style="border:1px solid #000; padding:8px;"><b>Form ID:</b> <span id="p_form_id"></span></td>
+                <td style="border:1px solid #000; padding:8px;"><b>Date:</b> <span id="p_app_date"></span></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border:1px solid #000; padding:8px;"><b>Stall Name:</b> <span id="p_stall_name"></span></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:8px;"><b>Proprietor:</b> <span id="p_head_name"></span></td>
+                <td style="border:1px solid #000; padding:8px;"><b>Phone:</b> <span id="p_phone"></span></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border:1px solid #000; padding:8px;"><b>Representative:</b> <span id="p_rep"></span></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border:1px solid #000; padding:8px;"><b>Address:</b> <span id="p_address"></span></td>
+            </tr>
+        </table>
+
+        <h4 style="margin-bottom: 5px;">STALL & SERVICE DETAILS</h4>
+        <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 13px;">
+            <tr style="background: #f2f2f2;">
+                <th style="border:1px solid #000; padding:5px;">Description</th>
+                <th style="border:1px solid #000; padding:5px;">Qty/Info</th>
+                <th style="border:1px solid #000; padding:5px;">Description</th>
+                <th style="border:1px solid #000; padding:5px;">Qty/Info</th>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Specification</td><td style="border:1px solid #000;" id="p_spec"></td>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Area Size</td><td style="border:1px solid #000;" id="p_area"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Rack (8'x6')</td><td style="border:1px solid #000;" id="p_r8"></td>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Extra Table</td><td style="border:1px solid #000;" id="p_tab"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Rack (6'x6')</td><td style="border:1px solid #000;" id="p_r6"></td>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Extra Chair</td><td style="border:1px solid #000;" id="p_chr"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Rack (4'x6')</td><td style="border:1px solid #000;" id="p_r4"></td>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Extra Light</td><td style="border:1px solid #000;" id="p_lgt"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Plug Point</td><td style="border:1px solid #000;" id="p_plg"></td>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Valuation</td><td style="border:1px solid #000;" id="p_val"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Wooden Platform</td><td style="border:1px solid #000;" id="p_plat"></td>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Floor Mat</td><td style="border:1px solid #000;" id="p_mat"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; padding:5px; text-align:left;">Ad Type</td><td colspan="3" style="border:1px solid #000;" id="p_ad_type"></td>
+            </tr>
+        </table>
+
+        <div style="margin-top: 20px; float: right; width: 300px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr><td style="padding:5px; border:1px solid #000;">Grand Total:</td><td style="padding:5px; border:1px solid #000;" id="p_g_tot"></td></tr>
+		<tr><td style="padding:5px; border:1px solid #000;">Ad Price:</td><td style="padding:5px; border:1px solid #000;" id="p_ad_price"></td></tr>
+                <tr><td style="padding:5px; border:1px solid #000;">Total Bill:</td><td style="padding:5px; border:1px solid #000;" id="p_total_bill"></td></tr>
+                <tr style="color: green;"><td style="padding:5px; border:1px solid #000;">Paid Advance:</td><td style="padding:5px; border:1px solid #000;" id="p_paid"></td></tr>
+                <tr style="color: red;"><td style="padding:5px; border:1px solid #000;"><b>Due Balance:</b></td><td style="padding:5px; border:1px solid #000;" id="p_due"></td></tr>
+            </table>
+        </div>
+
+        <div style="clear: both; margin-top: 30px; font-size: 11px;">
+            <p><b>Transaction ID:</b> <span id="p_trx"></span> | <b>Trx Date:</b> <span id="p_trx_date"></span></p>
+            <p style="text-align: center; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                This is a computer generated document. Generated on: <span id="p_gen_time"></span>
+            </p>
+        </div>
+    </div>
+</div>
+
 <div class="container">
-    <div class="status-card">
+    <div class="card">
         <div class="header">
-            <h2>🔍 বুকিং স্ট্যাটাস ও রসিদ</h2>
-            <p>আপনার তথ্য যাচাই করুন এবং রসিদ সংগ্রহ করুন</p>
+            <h1>বর্ধমান বইমেলা</h1>
+            <p>অফিশিয়াল বুকিং ইনভয়েস পোর্টাল</p>
         </div>
 
         <div class="search-box">
-            <input type="text" id="bookingID" placeholder="বুকিং আইডি লিখুন (উদাঃ BF26-5217)">
-            <button class="btn-check" onclick="checkStatus()">সার্চ করুন</button>
+            <input type="text" id="bookingID" placeholder="আপনার Form ID দিন (উদাঃ BF26-1001)">
+            <button class="btn-search" onclick="searchBooking()">তথ্য দেখুন</button>
         </div>
 
         <div id="result-area">
-            <div class="data-grid" id="data-display">
-                </div>
-            
-            <div id="res-status" class="status-badge"></div>
+            <div class="section-title">আবেদনকারী ও স্টলের তথ্য</div>
+            <div class="grid">
+                <div class="item"><span>Application Date</span><b id="r_app_date"></b></div>
+                <div class="item"><span>Form ID</span><b id="r_form_id"></b></div>
+                <div class="item full"><span>Stall Name</span><b id="r_stall_name"></b></div>
+                <div class="item"><span>Proprietor Name</span><b id="r_head_name"></b></div>
+                <div class="item"><span>Phone</span><b id="r_phone"></b></div>
+                <div class="item full"><span>Address</span><b id="r_address"></b></div>
+                <div class="item"><span>Representative</span><b id="r_rep"></b></div>
+            </div>
 
-            <button class="btn-pdf" onclick="downloadPDF()">
-                📥 প্রফেশনাল রসিদ ডাউনলোড (PDF)
-            </button>
+            <div class="section-title">বিবরণ ও সেবা</div>
+            <div class="grid">
+                <div class="item"><span>Specification</span><b id="r_spec"></b></div>
+                <div class="item"><span>Area (sqft)</span><b id="r_area"></b></div>
+                <div class="item"><span>Rack 8'x6'</span><b id="r_r8"></b></div>
+                <div class="item"><span>Rack 6'x6'</span><b id="r_r6"></b></div>
+                <div class="item"><span>Rack 4'x6'</span><b id="r_r4"></b></div>
+                <div class="item"><span>Extra Table</span><b id="r_tab"></b></div>
+                <div class="item"><span>Extra Chair</span><b id="r_chr"></b></div>
+                <div class="item"><span>Extra Light</span><b id="r_lgt"></b></div>
+                <div class="item"><span>Extra Plug</span><b id="r_plg"></b></div>
+                <div class="item"><span>Platform</span><b id="r_plat"></b></div>
+                <div class="item"><span>Floor Mat</span><b id="r_mat"></b></div>
+                <div class="item"><span>Valuation</span><b id="r_val"></b></div>
+            </div>
+
+            <div class="section-title">পেমেন্ট বিবরণ</div>
+            <div class="grid">
+                <div class="item"><span>Grand Total</span><b id="r_g_tot"></b></div>
+                <div class="item"><span>Ad Type</span><b id="r_ad_type"></b></div>
+                <div class="item"><span>Total Bill</span><b id="r_total_bill"></b></div>
+                <div class="item"><span>Advance Paid</span><b id="r_paid"></b></div>
+                <div class="item"><span>Due Bill</span><b id="r_due"></b></div>
+                <div class="item"><span>Trx ID</span><b id="r_trx"></b></div>
+                <div class="item"><span>Trx Date</span><b id="r_trx_date"></b></div>
+            </div>
+
+            <div id="status_label" class="status-box"></div>
+            <button class="btn-download" id="downloadBtn" onclick="generatePDF()" disabled>📥 ডাউনলোড অনুমোদিত রসিদ (PDF)</button>
         </div>
-        <a href="news.html" class="back-home">← ফিরে যান</a>
     </div>
 </div>
 
 <script>
-    const manualData = {
-        "BF26-5217": { form_id: "BF26-5217", application_date: "16-02-2026", stall_name: "Ananda", address: "Raamchandra pur", proprietor_phone: "9609627316", specification: "Book Stall", area: "200f", stall_rate: 14000, extra_rack_8x6: 1, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 2, extra_chair: 1, extra_light: 2, extra_plug: 1, extra_platform: "No", extra_mat: "Yes", extra_total_amount: 5290, insurance_amount: 150000, grand_total: 19440, advance_amt: 8147, due_amount: 11293, ad_type: "Full Page Color", ad_trx_id: "123123123123", status: "বুকিং নিশ্চিত" },
-	"BF26-2752": { form_id: "BF26-2752", application_date: "16-02-2026", stall_name: "ASHA BOOK STALL", address: "KOLKATA", proprietor_phone: "9609627318", specification: "Book Stall", area: "300f", stall_rate: 21000, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 2, extra_chair: 0, extra_light: 0, extra_plug: 3, extra_platform: "No", extra_mat: "No", insurance_amount: 1500, grand_total: 22500, advance_amt: 8167, due_amount: 16333, ad_type: "Full Page B/W", ad_trx_id: "951236541235", status: "বুকিং নিশ্চিত" },
-	"BF26-6296": { form_id: "BF26-6296", application_date: "16-02-2026", stall_name: "zzzzzzzzzzzzzzzzzzzz", address: "zzzzzzzzzzzzzzzzzzz", proprietor_phone: "zzzzzzzzzzzzzzz", specification: "Book Stall", area: "100f", stall_rate: 7000, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 10000, grand_total: 7030, advance_amt: 5010, due_amount: 2020, ad_type: "Inside Cover (Front/Back)", ad_trx_id: "231456321452", status: "বুকিং নিশ্চিত" },
-	"BF26-3991": { form_id: "BF26-3991", application_date: "15-02-2026", stall_name: "rrrrrrrrrrrrrrrrr", address: "rrrrrrrrrrrrrrrrrr", proprietor_phone: "rrrrrrrrrrrrrrrr", specification: "Book Stall", area: "100f", stall_rate: 7000, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 300000, grand_total: 7030, advance_amt: 0, due_amount: 7030, ad_type: "No Ad", ad_trx_id: "N/A", status: "বুকিং অনিশ্চিত " },
-	"BF26-6895": { form_id: "BF26-6895", application_date: "17-02-2026", stall_name: "অঞ্জন বুক স্টল", address: "নীলাচল, ডিভিসি মোড়, বর্ধমান", proprietor_phone: "9609627316", specification: "Table Space", area: "100f", stall_rate: 1500, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 0, grand_total: 1500, advance_amt: 1167, due_amount: 2333, ad_type: "Full Page B/W", ad_trx_id: "432156987412", status: "বুকিং নিশ্চিত" },
-	"BF26-6596": { form_id: "BF26-6596", application_date: "16-02-2026", stall_name: "dddd", address: "ddddddddddddd", proprietor_phone: "ddddddddddddddd", specification: "Table Space", area: "100f", stall_rate: 1500, extra_rack_8x6: 0, extra_rack_6x6: 0, extra_rack_4x6: 0, extra_table: 0, extra_chair: 0, extra_light: 0, extra_plug: 0, extra_platform: "No", extra_mat: "No", insurance_amount: 0, grand_total: 1500, advance_amt: 500, due_amount: 1000, ad_type: "No Ad", ad_trx_id: "321456321452", status: "বুকিং নিশ্চিত" },
-    };
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzs6ZpiHzT2FIqfZqlA4AlQjqtoWQZgivd9oNJNPL9oCpp69-Av0QEH3i8Ic30Oq_MLUQ/exec';
+    let d = null;
 
-    let currentData = null;
+    async function searchBooking() {
+        const id = document.getElementById('bookingID').value.trim();
+        if(!id) return alert("দয়া করে আইডি লিখুন");
+        document.querySelector('.btn-search').innerText = "খোঁজা হচ্ছে...";
+        try {
+            const res = await fetch(`${scriptURL}?search_id=${id}`);
+            d = await res.json();
+            if(d.status === "error") {
+                alert("আইডি পাওয়া যায়নি!");
+                document.getElementById('result-area').style.display = 'none';
+            } else {
+                displayResults();
+            }
+        } catch(e) { alert("সার্ভার ত্রুটি!"); }
+        document.querySelector('.btn-search').innerText = "তথ্য দেখুন";
+    }
 
-    function checkStatus() {
-        const id = document.getElementById('bookingID').value.trim().toUpperCase();
-        const area = document.getElementById('result-area');
-        const display = document.getElementById('data-display');
+    function displayResults() {
+        // স্ক্রিন ডিসপ্লে (আপনার লজিক অনুযায়ী)
+        document.getElementById('r_app_date').innerText = d.application_date || "";
+        document.getElementById('r_form_id').innerText = d.form_id || "";
+        document.getElementById('r_stall_name').innerText = d.stall_name || "";
+        document.getElementById('r_head_name').innerText = d.head_name || "";
+        document.getElementById('r_address').innerText = d.address || "";
+        document.getElementById('r_phone').innerText = d.proprietor_phone || "";
+        document.getElementById('r_rep').innerText = d.represent_name || "";
+        document.getElementById('r_spec').innerText = d.specification || "";
+        document.getElementById('r_area').innerText = d.area_size || "0";
+        document.getElementById('r_r8').innerText = d.extra_rack_8x6 || 0;
+        document.getElementById('r_r6').innerText = d.extra_rack_6x6 || 0;
+        document.getElementById('r_r4').innerText = d.extra_rack_4x6 || 0;
+        document.getElementById('r_tab').innerText = d.extra_table || 0;
+        document.getElementById('r_chr').innerText = d.extra_chair || 0;
+        document.getElementById('r_lgt').innerText = d.extra_light || 0;
+        document.getElementById('r_plg').innerText = d.extra_plug || 0;
+        document.getElementById('r_plat').innerText = d.extra_platform || "No";
+        document.getElementById('r_mat').innerText = d.extra_mat || "No";
+        document.getElementById('r_val').innerText = d.valuation || "0";
+        document.getElementById('r_g_tot').innerText = "₹" + (d.grand_total || 0);
+        document.getElementById('r_ad_type').innerText = d.ad_type || "N/A";
+        document.getElementById('r_total_bill').innerText = "₹" + (d.total_bill || 0);
+        document.getElementById('r_paid').innerText = "₹" + (d.advance_pay || 0);
+        document.getElementById('r_due').innerText = "₹" + (d.due_bill || 0);
+        document.getElementById('r_trx').innerText = d.trx_id || "N/A";
+        document.getElementById('r_trx_date').innerText = d.trx_date || "N/A";
+
+        const s = document.getElementById('status_label');
+        const status = d.booking_status || "Pending";
+        s.innerText = "বুকিং স্ট্যাটাস: " + status;
+        s.className = "status-box " + (status === "Approved" ? "Approved" : "Pending");
         
-        if (manualData[id]) {
-            currentData = manualData[id];
-            
-            display.innerHTML = `
-                <div class="info-item"><span>আবেদনের তারিখ</span><b>${currentData.application_date}</b></div>
-                <div class="info-item"><span>ফর্ম আইডি</span><b>${currentData.form_id}</b></div>
-                <div class="info-item"><span>ফোন নম্বর</span><b>${currentData.proprietor_phone}</b></div>
-                <div class="info-item full-width"><span>প্রতিষ্ঠানের নাম</span><b>${currentData.stall_name}</b></div>
-                <div class="info-item full-width"><span>ঠিকানা</span><b>${currentData.address}</b></div>
-                <div class="info-item"><span>স্টল টাইপ</span><b>${currentData.specification}</b></div>
-                <div class="info-item"><span>এরিয়া</span><b>${currentData.area}</b></div>
-                
-                <div class="info-item"><span>র‍্যাক (8x6)</span><b>${currentData.extra_rack_8x6} টি</b></div>
-                <div class="info-item"><span>র‍্যাক (6x6)</span><b>${currentData.extra_rack_6x6} টি</b></div>
-                <div class="info-item"><span>র‍্যাক (4x6)</span><b>${currentData.extra_rack_4x6} টি</b></div>
-                
-                <div class="info-item"><span>টেবিল</span><b>${currentData.extra_table} টি</b></div>
-                <div class="info-item"><span>চেয়ার</span><b>${currentData.extra_chair} টি</b></div>
-                <div class="info-item"><span>লাইট</span><b>${currentData.extra_light} টি</b></div>
-                <div class="info-item"><span>প্লাগ পয়েন্ট</span><b>${currentData.extra_plug} টি</b></div>
-                
-                <div class="info-item"><span>প্ল্যাটফর্ম</span><b>${currentData.extra_platform}</b></div>
-                <div class="info-item"><span>ম্যাট (Mat)</span><b>${currentData.extra_mat}</b></div>
-                <div class="info-item"><span>বিজ্ঞাপন</span><b>${currentData.ad_type}</b></div>
-                <div class="info-item"><span>ইন্সুরেন্স</span><b>₹${currentData.insurance_amount}</b></div>
-                
-                <div class="info-item full-width"><span>Transaction ID</span><b>${currentData.ad_trx_id}</b></div>
-                
-                <div class="info-item"><span>মোট বিল</span><b style="color:#2c3e50">₹${currentData.grand_total}</b></div>
-                <div class="info-item"><span>জমা (Paid)</span><b style="color:green">₹${currentData.advance_amt}</b></div>
-                <div class="info-item"><span>বকেয়া (Due)</span><b style="color:red">₹${currentData.due_amount}</b></div>
-            `;
-            
-            document.getElementById('res-status').innerText = "অবস্থা: " + currentData.status;
-            area.style.display = 'block';
+        const btn = document.getElementById('downloadBtn');
+        if(status === "Approved") {
+            btn.disabled = false;
+            btn.innerText = "📥 ডাউনলোড অনুমোদিত রসিদ (PDF)";
         } else {
-            alert("দুঃখিত! এই আইডিটি খুঁজে পাওয়া যায়নি।");
-            area.style.display = 'none';
+            btn.disabled = true;
+            btn.innerText = "❌ পেন্ডিং বুকিং ডাউনলোড সম্ভব নয়";
+        }
+        document.getElementById('result-area').style.display = 'block';
+    }
+
+    async function generatePDF() {
+        if (!d || d.booking_status !== "Approved") return;
+        const btn = document.getElementById('downloadBtn');
+        btn.innerText = "PDF তৈরি হচ্ছে...";
+        btn.disabled = true;
+
+        // PDF টেমপ্লেটে ডাটা পাঠানো
+        document.getElementById('p_app_date').innerText = d.application_date || "";
+        document.getElementById('p_form_id').innerText = d.form_id || "";
+        document.getElementById('p_stall_name').innerText = d.stall_name || "";
+        document.getElementById('p_head_name').innerText = d.head_name || "";
+        document.getElementById('p_address').innerText = d.address || "";
+        document.getElementById('p_phone').innerText = d.proprietor_phone || "";
+        document.getElementById('p_rep').innerText = d.represent_name || "";
+        document.getElementById('p_spec').innerText = d.specification || "";
+        document.getElementById('p_area').innerText = (d.area_size || "0") + " sqft";
+        document.getElementById('p_r8').innerText = d.extra_rack_8x6 || 0;
+        document.getElementById('p_r6').innerText = d.extra_rack_6x6 || 0;
+        document.getElementById('p_r4').innerText = d.extra_rack_4x6 || 0;
+        document.getElementById('p_tab').innerText = d.extra_table || 0;
+        document.getElementById('p_chr').innerText = d.extra_chair || 0;
+        document.getElementById('p_lgt').innerText = d.extra_light || 0;
+        document.getElementById('p_plg').innerText = d.extra_plug || 0;
+        document.getElementById('p_plat').innerText = d.extra_platform || "No";
+        document.getElementById('p_mat').innerText = d.extra_mat || "No";
+        document.getElementById('p_val').innerText = d.valuation || "0";
+        document.getElementById('p_ad_type').innerText = d.ad_type || "N/A";
+        document.getElementById('p_g_tot').innerText = "₹" + (d.grand_total || 0);
+	document.getElementById('p_ad_price').innerText = "₹" + (d.ad_price || 0);
+        document.getElementById('p_total_bill').innerText = "₹" + (d.total_bill || 0);
+        document.getElementById('p_paid').innerText = "₹" + (d.advance_pay || 0);
+        document.getElementById('p_due').innerText = "₹" + (d.due_bill || 0);
+        document.getElementById('p_trx').innerText = d.trx_id || "N/A";
+        document.getElementById('p_trx_date').innerText = d.trx_date || "N/A";
+        document.getElementById('p_gen_time').innerText = new Date().toLocaleString();
+
+        const element = document.getElementById('invoice-template');
+        element.style.display = 'block';
+
+        try {
+            const canvas = await html2canvas(element.querySelector('div'), { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            doc.addImage(imgData, 'PNG', 10, 10, 190, 0);
+            doc.save(`Invoice_${d.form_id}.pdf`);
+        } catch (e) {
+            alert("Error generating PDF");
+        } finally {
+            element.style.display = 'none';
+            btn.innerText = "📥 ডাউনলোড অনুমোদিত রসিদ (PDF)";
+            btn.disabled = false;
         }
     }
-
-    function downloadPDF() {
-        if (!currentData) return;
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        doc.setFillColor(30, 144, 255);
-        doc.rect(0, 0, 210, 40, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(22);
-        doc.text("BURDWAN BOOK FAIR 2026", 105, 20, null, null, "center");
-        doc.setFontSize(10);
-        doc.text("Official Booking Receipt & Payment Invoice", 105, 30, null, null, "center");
-
-        doc.autoTable({
-            startY: 50,
-            head: [['Description', 'Information']],
-            body: [
-                ['Form ID', currentData.form_id],
-                ['Date', currentData.application_date],
-                ['Organization', currentData.stall_name],
-                ['Address', currentData.address],
-                ['Stall Details', `${currentData.specification} (${currentData.area})`],
-                ['Transaction ID', currentData.ad_trx_id]
-            ],
-            theme: 'striped',
-            headStyles: { fillColor: [44, 62, 80] }
-        });
-
-        doc.autoTable({
-            startY: doc.lastAutoTable.finalY + 10,
-            head: [['Item Name', 'Qty/Status']],
-            body: [
-                ['Extra Rack (8x6)', currentData.extra_rack_8x6],
-                ['Extra Rack (6x6)', currentData.extra_rack_6x6],
-                ['Extra Rack (4x6)', currentData.extra_rack_4x6],
-                ['Extra Table', currentData.extra_table],
-                ['Extra Chair', currentData.extra_chair],
-                ['Extra Light', currentData.extra_light],
-                ['Extra Plug Point', currentData.extra_plug],
-                ['Extra Platform', currentData.extra_platform], // PDF-এ প্ল্যাটফর্ম
-                ['Extra Mat', currentData.extra_mat],          // PDF-এ ম্যাট
-                ['Ad Type', currentData.ad_type],
-                ['Insurance', `INR ${currentData.insurance_amount}`]
-            ],
-            theme: 'grid',
-            styles: { fontSize: 8 }
-        });
-
-        const finalY = doc.lastAutoTable.finalY + 15;
-        doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`GRAND TOTAL: INR ${currentData.grand_total}`, 140, finalY);
-        doc.setTextColor(34, 139, 34);
-        doc.text(`PAID ADVANCE: INR ${currentData.advance_amt}`, 140, finalY + 8);
-        doc.setTextColor(220, 20, 60);
-        doc.text(`DUE AMOUNT: INR ${currentData.due_amount}`, 140, finalY + 16);
-
-        doc.setTextColor(150);
-        doc.setFontSize(8);
-        doc.text("This is a computer-generated invoice. No signature is required.", 105, 285, null, null, "center");
-
-        doc.save(`Invoice_${currentData.form_id}.pdf`);
-    }
 </script>
-
 </body>
 </html>

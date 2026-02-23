@@ -315,17 +315,37 @@
     function sendWA() {
         const sel = document.querySelectorAll('.wa-check:checked');
         if(!sel.length) return alert("মেম্বার সিলেক্ট করুন");
+        
         const msg = prompt("মেসেজটি লিখুন:");
         if(!msg) return;
-        sel.forEach(c => {
-            const phone = c.dataset.phone;
-            const name = c.dataset.name;
-            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent("নমস্কার " + name + ",\n" + msg)}`, '_blank');
-        });
-    }
 
-    function resetForm() {
-        location.reload();
+        // আপনার বইমেলার ওয়েবসাইট লিঙ্কটি এখানে দিন
+        const fairLink = "https://www.burdwanbookfair.com"; 
+
+        sel.forEach(c => {
+            // নম্বর ফরম্যাটিং
+            let phone = c.dataset.phone.replace(/\D/g, ''); 
+            if(phone.length === 10) {
+                phone = '91' + phone;
+            } else if(phone.length > 12 && phone.startsWith('91')) {
+                phone = phone.slice(-12);
+            }
+
+            const name = c.dataset.name;
+            // এই লাইনটিতে মেম্বার আইডি রো থেকে সংগ্রহ করা হচ্ছে
+            const memberId = c.closest('tr').cells[1].innerText; 
+
+            // মেসেজ ফরম্যাট: নমস্কার [নাম] (ID: [আইডি]), [আপনার মেসেজ] [লিঙ্ক]
+            const finalMsg = "নমস্কার " + name + " (ID: " + memberId + "),\n" + 
+                             msg + "\n\n" + 
+                             "বইমেলা ওয়েবসাইট: " + fairLink;
+
+            const encodedMsg = encodeURIComponent(finalMsg);
+            
+            const waLink = "https://api.whatsapp.com/send?phone=" + phone + "&text=" + encodedMsg;
+            
+            window.open(waLink, '_blank');
+        });
     }
 
     function doPrint() {

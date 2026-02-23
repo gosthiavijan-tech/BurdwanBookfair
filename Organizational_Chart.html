@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সাংগঠনিক কাঠামো - বর্ধমান বইমেলা</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: #f4f7f9; color: #333; line-height: 1.6; }
+
+        header {
+            background: #1a2a6c; color: white; padding: 40px 20px;
+            text-align: center; border-bottom: 5px solid #ffcc00;
+        }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 20px; }
+
+        h2 { color: #1a2a6c; text-align: center; margin-bottom: 30px; }
+
+        /* পদমর্যাদা অনুযায়ী গ্রিড */
+        .org-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* পদ কার্ড ডিজাইন */
+        .post-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid #1a2a6c;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            background: #1a2a6c;
+            color: white;
+        }
+
+        .post-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
+        .post-card p { font-size: 0.9rem; opacity: 0.8; }
+
+        /* মডাল বা পপ-আপ স্টাইল */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .close-btn { float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #d63031; }
+
+        .member-list { margin-top: 20px; list-style: none; }
+        .member-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .member-list li span { font-weight: bold; color: #1a2a6c; }
+
+        .back-link {
+            display: block; text-align: center; margin-top: 40px;
+            text-decoration: none; color: #d63031; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>সাংগঠনিক কাঠামো ও কার্যকারী সদস্য</h1>
+</header>
+
+<div class="container">
+    <h2>পদমর্যাদা ও সদস্যবৃন্দ</h2>
+    <p style="text-align: center; margin-bottom: 30px;">নিচের যে কোনো পদে ক্লিক করে সদস্যদের তালিকা দেখুন</p>
+
+    <div class="org-grid" id="postGrid">
+        </div>
+
+    <a href="index.html" class="back-link">← পূর্বের পাতায় ফিরে যান</a>
+</div>
+
+<div id="memberModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3 id="modalTitle" style="color: #1a2a6c; border-bottom: 2px solid #ffcc00; padding-bottom: 10px;">পদ</h3>
+        <ul id="memberList" class="member-list">
+            </ul>
+    </div>
+</div>
+
+<script>
+    // পদের তালিকা এবং সদস্যদের ডেটা
+    const committeeData = {
+        "সভাপতি": ["২ স্বপন কুমার ভট্টাচার্য  (বর্তমান)", "১ শ্যামাপ্রসাদ কুন্ডু (প্রাক্তন)"],
+        "সহ সভাপতি": [": নিতাই চন্দ্র কোনার, প্রবীর চট্টোপাধ্যায়, শম্ভুনাথ ব্যানার্জী, নিখিল চক্রবর্ত্তী, প্রদীপ্ত সাহানা"],
+        "সাধারণ সম্পাদক": ["২ শ্যামল চক্রবর্ত্তী ","১ সমীরণ চৌধুরী"],
+        "সম্পাদক (সংগঠন)": ["সদস্য নাম ৫"],
+        "সম্পাদক (অর্থ)": ["সদস্য নাম ৬"],
+        "সম্পাদক (প্রাঙ্গন সজ্জা ও পরিকল্পনা)": ["সদস্য নাম ৭"],
+        "সম্পাদক (যোগাযোগ ও স্টল বুকিং)": ["সদস্য নাম ৮"],
+        "যুগ্ম সম্পাদক (প্রচার ও জনসংযোগ)": ["সদস্য নাম ৯"],
+        "যুগ্ম সম্পাদক (প্রাঙ্গন পরিষেবা)": ["সদস্য নাম ১০"],
+        "যুগ্ম সম্পাদক (সাংস্কৃতিক অনুষ্ঠান ও আলোচনা)": ["সদস্য নাম ১১"],
+        "যুগ্ম সম্পাদক (অভ্যর্থনা ও দপ্তর)": ["সদস্য নাম ১২"],
+        "যুগ্ম সম্পাদক (প্রদর্শনী ও বিপণন)": ["সদস্য নাম ১৩"],
+        "যুগ্ম সম্পাদক (প্রতিযোগিতা, কর্মশালা ও সম্মেলন)": ["সদস্য নাম ১৪"],
+        "सहসম্পাদকবৃন্দ": ["নাম ১", "নাম ২"],
+        "যোগাযোগ ও প্রচার": ["সদস্য নাম ১৫"],
+        "সংগঠন ও অর্থ": ["সদস্য নাম ১৬"],
+        "সাংস্কৃতিক অনুষ্ঠান ও আলোচনা": ["সদস্য নাম ১৭"],
+        "দপ্তর": ["সদস্য নাম ১৮"],
+        "প্রদর্শনী ও বিপণন": ["সদস্য নাম ১৯"],
+        "প্রতিযোগিতা, কর্মশালা ও সম্মেলন": ["সদস্য নাম ২০"],
+        "অভ্যর্থনা": ["সদস্য নাম ২১"],
+        "প্রাঙ্গন পরিষেবা": ["সদস্য নাম ২২"]
+    };
+
+    const grid = document.getElementById('postGrid');
+
+    // কার্ড তৈরি করা
+    Object.keys(committeeData).forEach(post => {
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        card.innerHTML = `<h3>${post}</h3><p>সদস্য তালিকা দেখতে ক্লিক করুন</p>`;
+        card.onclick = () => openModal(post);
+        grid.appendChild(card);
+    });
+
+    // মডাল খোলা
+    function openModal(post) {
+        document.getElementById('modalTitle').innerText = post;
+        const list = document.getElementById('memberList');
+        list.innerHTML = "";
+        
+        committeeData[post].forEach(name => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${name}</span>`;
+            list.appendChild(li);
+        });
+
+        document.getElementById('memberModal').style.display = "block";
+    }
+
+    // মডাল বন্ধ করা
+    function closeModal() {
+        document.getElementById('memberModal').style.display = "none";
+    }
+
+    // বাইরে ক্লিক করলে মডাল বন্ধ হবে
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('memberModal')) {
+            closeModal();
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>বইমেলা স্টল বুকিং ফর্ম </title>
+    <title>৪৯ তম বর্ধমান বইমেলা স্টল বুকিং</title>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; margin: 0; padding: 40px 10px; display: flex; justify-content: center; }
         .main-card { width: 100%; max-width: 850px; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-top: 8px solid #1a73e8; }
-        h2 { text-align: center; color: #1a73e8; margin-bottom: 30px; font-size: 26px; }
+        .header-section { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .header-section h1 { color: #d32f2f; margin: 0; font-size: 32px; }
+        .header-section h2 { color: #1a73e8; margin: 5px 0; font-size: 22px; }
+        .header-section p { font-weight: bold; color: #555; margin: 5px 0; }
         h3 { background-color: #e8f0fe; color: #1a73e8; padding: 12px 15px; border-radius: 6px; font-size: 18px; margin-top: 35px; margin-bottom: 20px; border-left: 5px solid #1a73e8; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; color: #444; font-size: 14px; }
@@ -20,22 +23,36 @@
         th { background: #f8f9fa; }
         .submit-btn { width: 100%; background-color: #27ae60; color: white; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.3s; }
         .submit-btn:hover { background-color: #219150; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
         #successModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 450px; width: 90%; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h2>বইমেলা স্টল বুকিং ফর্ম </h2>
+    <div class="header-section">
+        <h1>বর্ধমান বইমেলা</h1>
+        <h2>পরিচালনায়: বর্ধমান অভিযান গোষ্ঠী</h2>
+        <p>৪৯ তম বর্ষ</p>
+        <p>তারিখ: ০১/০১/২০২৬ থেকে ১০/০১/২০২৬</p>
+    </div>
 
     <form id="bookingForm">
         <input type="hidden" name="form_id" id="hidden_form_id">
+        <input type="hidden" name="total_extra" id="hidden_total_extra">
         <input type="hidden" name="grand_total" id="hidden_grand_total">
+        <input type="hidden" name="ad_type" value="N/A">
+        <input type="hidden" name="ad_price" value="0">
+        <input type="hidden" name="total_bill" id="hidden_total_bill">
+        <input type="hidden" name="advance_pay" value="0">
+        <input type="hidden" name="due_bill" value="0">
+        <input type="hidden" name="trx_id" value="PENDING">
+        <input type="hidden" name="trx_date" id="hidden_trx_date">
+        <input type="hidden" name="booking_status" value="Submitted">
 
-        <div class="form-group" style="background: #fdfdfd; padding: 10px; border: 1px dashed #ccc; border-radius: 5px;">
-            <label>আবেদনের তারিখ (Date of Application)</label>
+        <div class="form-group">
+            <label>আবেদনের তারিখ</label>
             <input type="date" id="application_date" name="application_date" readonly style="background: #eee;">
         </div>
 
@@ -80,8 +97,7 @@
             </div>
             <div class="form-group">
                 <label>AREA OF STALL / QUANTITY</label>
-                <select name="area" id="stall_area" onchange="calculateEverything()">
-                </select>
+                <select name="area_size" id="stall_area" onchange="calculateEverything()"></select>
             </div>
         </div>
         <div class="price-box">
@@ -94,9 +110,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Item Description</th>
-                        <th>Quantity / Selection</th>
-                        <th>Rate (INR)</th>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Rate</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
@@ -105,47 +121,30 @@
                     <tr><td>EXTRA RACK (6'x6')</td><td><input type="number" name="extra_rack_6x6" class="extra-qty" data-rate="1080" value="0" min="0" oninput="calculateEverything()"></td><td>1080</td><td class="item-total">0.00</td></tr>
                     <tr><td>EXTRA RACK (4'x6')</td><td><input type="number" name="extra_rack_4x6" class="extra-qty" data-rate="720" value="0" min="0" oninput="calculateEverything()"></td><td>720</td><td class="item-total">0.00</td></tr>
                     <tr><td>Extra Table</td><td><input type="number" name="extra_table" class="extra-qty" data-rate="300" value="0" min="0" oninput="calculateEverything()"></td><td>300</td><td class="item-total">0.00</td></tr>
-                    <tr style="background: #fffef0;"><td>Extra Chair (Daily)</td><td><input type="number" name="extra_chair" class="extra-qty" data-rate="15" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>15 (x10 days)</td><td class="item-total">0.00</td></tr>
-                    <tr style="background: #fffef0;"><td>Extra Light (Daily)</td><td><input type="number" name="extra_light" class="extra-qty" data-rate="30" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>30 (x10 days)</td><td class="item-total">0.00</td></tr>
-                    <tr style="background: #fffef0;"><td>Plug Point (Daily)</td><td><input type="number" name="extra_plug" class="extra-qty" data-rate="25" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>25 (x10 days)</td><td class="item-total">0.00</td></tr>
-                    
+                    <tr><td>Extra Chair (Daily)</td><td><input type="number" name="extra_chair" class="extra-qty" data-rate="15" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>15 x10</td><td class="item-total">0.00</td></tr>
+                    <tr><td>Extra Light (Daily)</td><td><input type="number" name="extra_light" class="extra-qty" data-rate="30" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>30 x10</td><td class="item-total">0.00</td></tr>
+                    <tr><td>Plug Point (Daily)</td><td><input type="number" name="extra_plug" class="extra-qty" data-rate="25" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>25 x10</td><td class="item-total">0.00</td></tr>
                     <tr>
-                        <td>Platform (Per 100 sqft)</td>
-                        <td>
-                            <select name="extra_platform" class="extra-qty area-based" data-rate="3000" onchange="calculateEverything()">
-                                <option value="No">No</option>
-                                <option value="Yes">Yes</option>
-                            </select>
-                        </td>
-                        <td>3000/100sqft</td>
-                        <td class="item-total">0.00</td>
+                        <td>Platform (Per 100sqft)</td>
+                        <td><select name="extra_platform" class="extra-qty area-based" data-rate="3000" onchange="calculateEverything()"><option value="No">No</option><option value="Yes">Yes</option></select></td>
+                        <td>3000</td><td class="item-total">0.00</td>
                     </tr>
                     <tr>
-                        <td>Mat (Per 100 sqft)</td>
-                        <td>
-                            <select name="extra_mat" class="extra-qty area-based" data-rate="1500" onchange="calculateEverything()">
-                                <option value="No">No</option>
-                                <option value="Yes">Yes</option>
-                            </select>
-                        </td>
-                        <td>1500/100sqft</td>
-                        <td class="item-total">0.00</td>
+                        <td>Mat (Per 100sqft)</td>
+                        <td><select name="extra_mat" class="extra-qty area-based" data-rate="1500" onchange="calculateEverything()"><option value="No">No</option><option value="Yes">Yes</option></select></td>
+                        <td>1500</td><td class="item-total">0.00</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="price-box" style="background: #e8f0fe; border-color: #1a73e8;">
             অতিরিক্ত মোট খরচ: ₹ <span id="display_extra_total">0.00</span> /-
-            <input type="hidden" name="extra_total_amount" id="hidden_extra_total">
         </div>
 
         <h3>৪. বিমা (Insurance)</h3>
-        <div id="ins_mandatory_box" style="display: none; background: #fff4e6; padding: 10px; border-left: 5px solid #fd7e14; margin-bottom: 10px;">
-            <label><input type="checkbox" checked onclick="return false;"> বিমা করা বাধ্যতামূলক</label>
-        </div>
         <div class="form-group">
-            <label>Total valuation of stock at the fair * (সর্বনিম্ন ১০,০০০)</label>
-            <input type="number" id="valuation" name="valuation" value="0" step="5000" min="0" oninput="calculateEverything()">
+            <label>Total valuation of stock at the fair * (৫০০০ এর গুণিতকে বাড়বে)</label>
+            <input type="number" id="valuation" name="valuation" value="0" min="0" step="5000" oninput="calculateEverything()">
         </div>
         <div class="price-box" id="ins_res_box" style="display:none; background: #f1f8e9; border-color: #4caf50;">
             বিমা চার্জ (১০০০ এ ৩ টাকা): ₹ <span id="display_insurance_charge">0.00</span> /-
@@ -153,158 +152,144 @@
         </div>
 
         <div class="grand-total-section">
-            <span style="font-size: 18px;">মোট বিল (Total Bill):</span><br>
+            <span style="font-size: 18px;">মোট বিল:</span><br>
             <span style="font-size: 32px; font-weight: 900;">₹ <span id="grand_total_display">0.00</span></span>
         </div>
 
-        <button type="submit" id="submitBtn" class="submit-btn">এগিয়ে যান</button>
+        <button type="submit" id="submitBtn" class="submit-btn">জমা দিন</button>
     </form>
 </div>
 
 <div id="successModal">
     <div class="modal-content">
-        <div style="color: #27ae60; font-size: 50px; margin-bottom: 10px;">✔</div>
-        <h2 style="margin: 0; color: #333;">সফলভাবে জমা হয়েছে!</h2>
-        <p style="color: #666; margin: 10px 0;">আপনার বুকিং আইডিটি সংরক্ষণ করুন বা কপি করে রাখুন:</p>
-        <div id="display_form_id" style="font-size: 24px; font-weight: bold; color: #1a73e8; background: #e8f0fe; padding: 10px; border-radius: 8px; margin: 15px 0; border: 2px dashed #1a73e8;"></div>
-        <button onclick="goToAdPage()" class="submit-btn" style="background: #f39c12;">এগিয়ে যান (Next)</button>
+        <div style="color: #27ae60; font-size: 50px;">✔</div>
+        <h2>সফলভাবে জমা হয়েছে!</h2>
+        <p>আপনার বুকিং আইডি:</p>
+        <div id="display_form_id" style="font-size: 24px; font-weight: bold; color: #1a73e8; background: #e8f0fe; padding: 10px; border-radius: 8px; margin: 15px 0;"></div>
+        <button type="button" onclick="goToAdPage()" class="submit-btn" style="background: #f39c12;">এগিয়ে যান (Next)</button>
     </div>
 </div>
 
 <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzPOZqkgRYJ85NSkSN0lODTt2ODc6CAlOWqjAM_7zjl7acrPq7aJ_h2S2FoQPRhgphPlw/exec'; 
     const areaOptions = {
-        "Stall": [{ text: "(10'X10')", value: 100 }, { text: "(5'X10')", value: 50 }, { text: "(10'X15')", value: 150 }, { text: "(15'X15')", value: 225 }, { text: "(20'X10')", value: 200 }, { text: "(20'X15')", value: 300 }, { text: "(20'X20')", value: 400 }, { text: "(30'X10')", value: 300 }, { text: "(30'X15')", value: 450 }, { text: "(40'X10')", value: 400 }, { text: "(40'X15')", value: 600 }],
-        "Table": [{ text: "১টি টেবিল", value: 100 }, { text: "২টি টেবিল", value: 200 }, { text: "৩টি টেবিল", value: 300 }],
-        "Fixed": [{ text: "নির্দিষ্ট মাপ (Fixed)", value: 100 }]
+        "Stall": [
+            { text: "(10'X10')", value: 100 }, { text: "(05'X10')", value: 50 }, { text: "(10'X15')", value: 150 }, { text: "(15'X10')", value: 150 }, { text: "(15'X15')", value: 225 }, { text: "(15'X20')", value: 300 }, { text: "(20'X10')", value: 200 }, { text: "(20'X15')", value: 300 }, { text: "(20'X20')", value: 400 }, { text: "(25'X10')", value: 250 }, { text: "(30'X10')", value: 300 }, { text: "(30'X12')", value: 360 }, { text: "(30'X15')", value: 450 }, { text: "(30'X20')", value: 600 }, { text: "(40'X10')", value: 400 }, { text: "(40'X15')", value: 600 }
+        ],
+        "Table": [{ text: "১টি টেবিল", value: 100 }, { text: "২টি টেবিল", value: 200 }],
+        "Fixed": [{ text: "নির্দিষ্ট মাপ", value: 100 }]
     };
 
     function updateAreaOptions() {
         const spec = document.getElementById('stall_spec').value;
         const areaSelect = document.getElementById('stall_area');
-        const valInput = document.getElementById('valuation');
+        const valuationInput = document.getElementById('valuation');
+        
         areaSelect.innerHTML = "";
         if(!spec) return;
 
+        // বিমার মিনিমাম লজিক
+        if(spec === "Book Stall") {
+            valuationInput.min = 10000;
+            if(parseFloat(valuationInput.value) < 10000) valuationInput.value = 10000;
+        } else if(spec === "Pavilion") {
+            valuationInput.min = 100000;
+            if(parseFloat(valuationInput.value) < 100000) valuationInput.value = 100000;
+        } else {
+            valuationInput.min = 0;
+        }
+
         let list = (spec.includes("Stall") || spec === "Other Then Book") ? areaOptions.Stall : 
                    (spec.includes("Table")) ? areaOptions.Table : areaOptions.Fixed;
-
+        
         list.forEach(opt => {
-            let el = document.createElement("option");
-            el.text = opt.text; el.value = opt.value;
+            let el = document.createElement("option"); el.text = opt.text; el.value = opt.value;
             areaSelect.add(el);
         });
-
-        if(spec === "Book Stall") valInput.value = 10000;
-        else if(spec === "Pavilion") valInput.value = 100000;
-        else valInput.value = 0;
-        
         calculateEverything();
     }
 
     function calculateEverything() {
         const spec = document.getElementById('stall_spec');
-        const area = document.getElementById('stall_area');
-        const currentArea = parseFloat(area.value) || 0;
-        const specValue = spec.value;
-
-        // স্টল ক্যালকুলেশন
+        const areaVal = parseFloat(document.getElementById('stall_area').value) || 0;
         const baseRate = parseFloat(spec.options[spec.selectedIndex].getAttribute('data-price')) || 0;
-        const stallTotal = (baseRate / 100) * currentArea;
-        
-        document.getElementById('display_stall_price').innerText = stallTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        const valuationInput = document.getElementById('valuation');
+
+        // ১. স্টল রেট ক্যালকুলেশন
+        const stallTotal = (baseRate / 100) * areaVal;
+        document.getElementById('display_stall_price').innerText = stallTotal.toFixed(2);
         document.getElementById('hidden_stall_rate').value = stallTotal.toFixed(2);
 
-        // অতিরিক্ত চাহিদা ক্যালকুলেশন
+        // ২. অতিরিক্ত খরচ ক্যালকুলেশন
         let extraTotal = 0;
         document.querySelectorAll('#extra_items_body tr').forEach(row => {
             const input = row.querySelector('.extra-qty');
             if(input) {
                 const rate = parseFloat(input.getAttribute('data-rate'));
                 let rowAmt = 0;
-
                 if (input.classList.contains('area-based')) {
-                    // Platform এবং Mat এর জন্য এরিয়া ভিত্তিক হিসাব
-                    if (input.value === "Yes") {
-                        rowAmt = (rate / 100) * currentArea;
-                    }
-                } else if (input.tagName === "INPUT") {
+                    if (input.value === "Yes") rowAmt = (rate / 100) * areaVal;
+                } else {
                     let qty = parseFloat(input.value) || 0;
-                    // Daily items are multiplied by 10 days
                     rowAmt = (input.getAttribute('data-type') === 'daily') ? (rate * 10) * qty : rate * qty;
                 }
-
-                row.querySelector('.item-total').innerText = rowAmt.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                row.querySelector('.item-total').innerText = rowAmt.toFixed(2);
                 extraTotal += rowAmt;
             }
         });
+        document.getElementById('display_extra_total').innerText = extraTotal.toFixed(2);
+        document.getElementById('hidden_total_extra').value = extraTotal.toFixed(2);
 
-        document.getElementById('display_extra_total').innerText = extraTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-        document.getElementById('hidden_extra_total').value = extraTotal.toFixed(2);
+        // ৩. বিমা ক্যালকুলেশন (১০০০ এ ৩ টাকা)
+        let val = parseFloat(valuationInput.value) || 0;
+        
+        // এনফোর্স মিনিমাম ভ্যালু অন ইনপুট
+        const currentMin = parseFloat(valuationInput.min) || 0;
+        if(val < currentMin) {
+            val = currentMin;
+            valuationInput.value = currentMin;
+        }
 
-        // ইন্স্যুরেন্স ক্যালকুলেশন
-        const valInput = document.getElementById('valuation');
-        let currentVal = parseFloat(valInput.value) || 0;
-        let isMandatory = (specValue === "Book Stall" || specValue === "Pavilion");
-        let minIns = (specValue === "Pavilion") ? 100000 : 10000;
-
-        document.getElementById('ins_mandatory_box').style.display = isMandatory ? 'block' : 'none';
-        if (isMandatory && currentVal < minIns) { valInput.value = minIns; currentVal = minIns; }
-
-        const insCharge = (isMandatory || currentVal > 0) ? (currentVal / 1000) * 3 : 0;
-        document.getElementById('ins_res_box').style.display = (insCharge > 0) ? 'block' : 'none';
-        document.getElementById('display_insurance_charge').innerText = insCharge.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        const insCharge = (val / 1000) * 3;
+        document.getElementById('ins_res_box').style.display = val > 0 ? 'block' : 'none';
+        document.getElementById('display_insurance_charge').innerText = insCharge.toFixed(2);
         document.getElementById('hidden_insurance_amount').value = insCharge.toFixed(2);
 
-        // গ্র্যান্ড টোটাল
-        const grandTotal = stallTotal + extraTotal + insCharge;
-        document.getElementById('grand_total_display').innerText = grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-        document.getElementById('hidden_grand_total').value = grandTotal.toFixed(2);
+        // ৪. গ্র্যান্ড টোটাল
+        const finalTotal = stallTotal + extraTotal + insCharge;
+        document.getElementById('grand_total_display').innerText = finalTotal.toFixed(2);
+        document.getElementById('hidden_grand_total').value = finalTotal.toFixed(2);
+        document.getElementById('hidden_total_bill').value = finalTotal.toFixed(2);
     }
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxBL2ZfWuUIkVxCGXhRsQTPXGMtd0U7JmplckhnXA9ZU5Xk-yfyrgx-2lDJqRrTfLaraA/exec'; 
     const form = document.getElementById('bookingForm');
-
     form.addEventListener('submit', e => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         const formID = "BF26-" + Math.floor(1000 + Math.random() * 9000);
         document.getElementById('hidden_form_id').value = formID;
+        document.getElementById('hidden_trx_date').value = new Date().toLocaleDateString();
 
-        btn.disabled = true;
-        btn.innerText = "জমা হচ্ছে...";
+        btn.disabled = true; btn.innerText = "জমা হচ্ছে...";
 
-        const formData = new FormData(form);
-        const plainFormData = Object.fromEntries(formData.entries());
-        const encodedData = new URLSearchParams(plainFormData).toString();
-
-        fetch(scriptURL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: encodedData
-        })
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new FormData(form)})
         .then(() => {
             localStorage.setItem('my_booking_id', formID);
             localStorage.setItem('last_bill_amount', document.getElementById('hidden_grand_total').value);
             document.getElementById('display_form_id').innerText = formID;
             document.getElementById('successModal').style.display = 'flex';
         })
-        .catch(error => {
-            alert("দুঃখিত, কোনো সমস্যা হয়েছে।");
-            btn.disabled = false;
-            btn.innerText = "পেমেন্ট করুন";
-        });
+        .catch(() => { alert("ত্রুটি হয়েছে!"); btn.disabled = false; });
     });
 
     function goToAdPage() {
         window.location.href = "add.html"; 
     }
 
-    window.onload = () => {
-        document.getElementById('application_date').valueAsDate = new Date();
-        updateAreaOptions();
+    window.onload = () => { 
+        document.getElementById('application_date').valueAsDate = new Date(); 
+        updateAreaOptions(); 
     };
 </script>
-
 </body>
 </html>
