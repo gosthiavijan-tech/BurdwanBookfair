@@ -3,112 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>পুরস্কার আর্কাইভ - বর্ধমান অভিযান</title>
+    <title>পুরস্কার ও সম্মাননা - বর্ধমান অভিযান</title>
     <style>
-        :root { --primary: #2c3e50; --blue: #3498db; }
-        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--blue); padding-bottom: 10px; }
+        :root { 
+            --primary: #0f172a; /* আরও ডিপ নেভি ব্লু */
+            --secondary: #7f1d1d; /* আরও ডিপ রেড */
+            --accent: #fbbf24;
+            --bg: #f8f9fa;
+            --btn-hover: #1e293b;
+        }
         
-        .tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 20px 0; }
-        .tab-btn { padding: 10px 18px; border: 1px solid var(--blue); background: #fff; color: var(--blue); font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-        .tab-btn.active { background: var(--blue); color: #fff; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: linear-gradient(to right, #f1f5f9, #e2e8f0);
+            padding: 20px; 
+            color: #333;
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            position: relative;
+        }
 
-        .table-responsive { overflow-x: auto; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: #f8f9fa; color: #333; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; }
-        td { padding: 12px; border-bottom: 1px solid #eee; color: #444; }
-        tr:hover { background: #f1f7ff; }
+        /* ব্যাক বাটন ডিজাইন */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-        .loading-box { text-align: center; padding: 50px; font-size: 18px; font-weight: bold; color: #666; }
-        .error-box { padding: 25px; border: 1px dashed #e74c3c; background: #fdf2f2; color: #c0392b; text-align: center; border-radius: 8px; margin-top: 20px; }
+        .back-btn:hover {
+            background-color: var(--secondary);
+            transform: translateX(-3px);
+        }
+        
+        h1 { 
+            text-align: center; 
+            color: var(--primary); 
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            margin-top: 20px; /* ব্যাক বাটনের জন্য জায়গা */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--secondary);
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+        
+        /* ট্যাব মেনু ডিজাইন - ডিপ কালার */
+        .tab-menu { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 12px; 
+            margin-bottom: 40px; 
+        }
+        
+        .tab-btn { 
+            padding: 14px 24px; 
+            cursor: pointer; 
+            border: 1px solid var(--primary);
+            background: #fff; 
+            color: var(--primary); 
+            font-weight: 700; /* ফন্ট আরও বোল্ড */
+            border-radius: 12px; 
+            transition: all 0.3s ease; 
+            font-size: 15px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .tab-btn:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active { 
+            background: var(--primary); /* ক্লিক করলে ডিপ কালার */
+            color: white; 
+            box-shadow: 0 8px 15px rgba(15, 23, 42, 0.3);
+            border-bottom: 4px solid var(--accent);
+        }
+
+        /* স্বাগতম বক্স */
+        .welcome-box {
+            text-align: center;
+            padding: 60px 20px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 15px;
+            background: #f8fafc;
+        }
+
+        /* টেবিল স্টাইল */
+        .table-wrapper { 
+            overflow-x: auto; 
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: white;
+        }
+        
+        th { 
+            background: var(--primary); 
+            color: white; 
+            padding: 18px 15px; 
+            text-align: left; 
+            font-weight: 600;
+        }
+        
+        td { 
+            padding: 15px; 
+            border-bottom: 1px solid #e2e8f0; 
+            color: #334155; 
+            font-size: 15px; 
+        }
+        
+        tr:nth-child(even) { background: #f8fafc; }
+        tr:hover { background: #f1f5f9; transition: 0.2s; }
+
+        .status-msg { text-align: center; padding: 50px; font-size: 18px; color: #475569; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .tab-btn { width: 100%; text-align: center; }
+            .container { padding: 20px; padding-top: 60px; }
+            .back-btn { width: calc(100% - 40px); text-align: center; justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>সম্মাননা ও পুরস্কার আর্কাইভ</h1>
+    <a href="index.html" class="back-btn">← ফিরে যান</a>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="loadSheet('0', event)">দেবপ্রসন্ন পুরস্কার</button>
-        <button class="tab-btn" onclick="loadSheet('1205965747', event)">শান্তি সাহা স্মৃতি</button>
-        <button class="tab-btn" onclick="loadSheet('2125857118', event)">সমীরণ চৌধুরী স্মৃতি</button>
-        <button class="tab-btn" onclick="loadSheet('1096819339', event)">অভিযান সাহিত্য সম্মান</button>
-        <button class="tab-btn" onclick="loadSheet('807355523', event)">কৃষ্ণগোপাল কুণ্ডু স্মৃতি</button>
+    <h1>সম্মাননা ও পুরস্কার</h1>
+
+    <div class="tab-menu">
+        <button class="tab-btn" onclick="loadSheet('0', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত দেবপ্রসন্ন পুরস্কার</button>
+        <button class="tab-btn" onclick="loadSheet('1205965747', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত  শান্তি সাহা স্মৃতি গুণীজন সংবর্ধনা</button>
+        <button class="tab-btn" onclick="loadSheet('2125857118', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত সমীরণ চৌধুরী স্মৃতি অভিযান সাহিত্য ও সংস্কৃতি পুরস্কার </button>
+        <button class="tab-btn" onclick="loadSheet('1096819339', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত অভিযান সাহিত্য সম্মান</button>
+        <button class="tab-btn" onclick="loadSheet('807355523', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত কৃষ্ণগোপাল কুণ্ডু স্মৃতি কবি সম্মান</button>
     </div>
 
     <div id="displayArea">
-        <div id="loader" class="loading-box">ডেটা লোড হচ্ছে...</div>
-        <div id="tableOutput" class="table-responsive" style="display:none;"></div>
+        <div class="welcome-box">
+            <h3>স্বাগতম</h3>
+            <p>তথ্য দেখার জন্য উপরের যেকোনো একটি ট্যাবে ক্লিক করুন।</p>
+        </div>
     </div>
 </div>
 
 <script>
-    // আপনার মূল পাবলিক লিঙ্ক
-    const baseLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeCT0dEBsTlRMIwuaItEYwAAZXdPQwPmTf4XJeYrc-Dk5DbVfogSQaIxPY6JWO6YUaSMi5cU0KM5p2/pub?output=csv";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyvR39erYIcBQCs_PnxCUuq-WFA4e1iW1h7uw1rx8QoCS6SRP_RIKrFhy34SWSZld0/exec"; 
 
     async function loadSheet(gid, e) {
-        // UI আপডেট
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        if(e) e.target.classList.add('active');
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        if(e && e.target) e.target.classList.add('active');
 
-        const loader = document.getElementById('loader');
-        const output = document.getElementById('tableOutput');
-        
-        loader.style.display = 'block';
-        loader.innerHTML = "গুগল থেকে ডেটা আনা হচ্ছে...";
-        output.style.display = 'none';
-
-        // GID যোগ করে নতুন লিঙ্ক তৈরি
-        const finalUrl = `${baseLink}&gid=${gid}&single=true`;
+        const displayArea = document.getElementById('displayArea');
+        displayArea.innerHTML = '<div class="status-msg">তথ্য লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</div>';
 
         try {
-            // Fetch API ব্যবহার করে ডেটা রিড করা
-            const response = await fetch(finalUrl);
-            if (!response.ok) throw new Error("Connection failed");
-            
-            const csvText = await response.text();
-            renderTable(csvText);
-            
-            loader.style.display = 'none';
-            output.style.display = 'block';
-        } catch (err) {
-            loader.innerHTML = `
-                <div class="error-box">
-                    <strong>ডেটা লোড করা যায়নি!</strong><br>
-                    সম্ভবত আপনার ব্রাউজার ডেটা ব্লক করছে।<br>
-                    <small>ফাইলটি ব্রাউজারের Incognito (প্রাইভেট) মোডে খুলে ট্রাই করুন অথবা অনলাইনে আপলোড করুন।</small>
-                </div>`;
-            console.error(err);
-        }
-    }
+            const response = await fetch(`${scriptUrl}?gid=${gid}`);
+            const data = await response.json();
 
-    function renderTable(csv) {
-        const rows = csv.split('\n');
-        if (rows.length === 0) return;
-
-        let html = '<table><thead><tr>';
-        
-        // হেডার
-        const headers = rows[0].split(',');
-        headers.forEach(h => html += `<th>${h.replace(/"/g, '')}</th>`);
-        html += '</tr></thead><tbody>';
-
-        // ডেটা রো
-        for (let i = 1; i < rows.length; i++) {
-            const cols = rows[i].split(',');
-            if (cols.length > 1) {
-                html += '<tr>';
-                cols.forEach(c => html += `<td>${c.replace(/"/g, '') || '-'}</td>`);
-                html += '</tr>';
+            if (data.error) {
+                displayArea.innerHTML = `<p style="color:red; text-align:center; padding:20px;">ত্রুটি: ${data.error}</p>`;
+                return;
             }
-        }
-        html += '</tbody></table>';
-        document.getElementById('tableOutput').innerHTML = html;
-    }
 
-    // প্রথমবার পেজ খুললে ট্যাব ১ লোড হবে
-    window.onload = () => loadSheet('0');
+            if (data && data.length > 0) {
+                let html = '<div class="table-wrapper"><table><thead><tr>';
+                const headers = Object.keys(data[0]);
+                
+                headers.forEach(h => {
+                    if(!h.includes('Col')) {
+                        html += `<th>${h}</th>`;
+                    }
+                });
+                html += '</tr></thead><tbody>';
+
+                data.forEach(row => {
+                    html += '<tr>';
+                    headers.forEach(h => {
+                        if(!h.includes('Col')) {
+                            html += `<td>${row[h] || '-'}</td>`;
+                        }
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table></div>';
+                displayArea.innerHTML = html;
+            } else {
+                displayArea.innerHTML = "<p class='status-msg'>এই শিটে কোনো তথ্য পাওয়া যায়নি।</p>";
+            }
+        } catch (error) {
+            displayArea.innerHTML = "<p style='color:red; text-align:center; padding:20px;'>কানেকশন এরর! ইন্টারনেট সংযোগ পরীক্ষা করুন।</p>";
+        }
+    }
 </script>
 
 </body>
