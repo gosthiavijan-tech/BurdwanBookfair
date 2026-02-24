@@ -18,11 +18,13 @@
         .section.active { display: block; }
 
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
-        .btn-block { width: 100%; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; font-size: 16px; margin-top: 10px; transition: 0.3s; }
+        .btn-block { width: 100%; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; font-size: 16px; margin-top: 10px; transition: 0.3s; text-decoration: none; display: block; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
         
-        /* নতুন সদস্য বার্তার স্টাইল */
+        .action-btn { flex: 1; padding: 10px; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.3s; }
+        .action-btn:hover { opacity: 0.8; }
+
         .notice-box { background: #fff3e0; color: #e65100; padding: 15px; border-radius: 10px; border: 1px solid #ffe0b2; margin: 20px 0; font-size: 14px; line-height: 1.5; text-align: center; }
         .notice-box b { color: #bf360c; }
 
@@ -53,8 +55,13 @@
         <button class="nav-btn" id="btnReceipt" onclick="showTab('download')">রসিদ</button>
     </div>
 
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button onclick="goBack()" class="action-btn" style="background: #95a5a6;">⬅ ফিরে যান</button>
+        <button onclick="location.reload()" class="action-btn" style="background: #34495e;">🔄 রিফ্রেশ করুন</button>
+    </div>
+
     <div class="notice-box">
-        📢 <b>নতুন সদস্য হওয়ার জন্য</b> বর্ধমান অভিযান গোষ্ঠীর অফিসে যোগাযোগ করুন।<br>
+        📢 <b>নতুন সদস্য হওয়ার জন্য</b> বর্ধমান অভিযান গোষ্ঠী অফিসে যোগাযোগ করুন।<br>
         🏠 ঠিকানা: <b>১০৫ তিনকোনিয়া জি. টি. রোড, বর্ধমান ৭১৩১০১।</b>
     </div>
 
@@ -64,10 +71,11 @@
         <div id="renewResult"></div>
         
         <div id="paymentArea" style="display:none; margin-top: 20px;">
-            <div style="text-align:center; padding:15px; border:2px dashed #ddd; border-radius:10px; margin-bottom: 15px;">
-                <p style="font-size:12px; color:#666;">নিচের QR কোডটি স্ক্যান করে পেমেন্ট করুন</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8016957008@upi&pn=Bardhaman%20Abhijan%20Gosthi" alt="QR">
+            <div style="text-align:center; padding:15px; border:2px dashed #ddd; border-radius:10px; margin-bottom: 15px; background: #fff;">
+                <p style="font-size:12px; color:#666;">QR কোড স্ক্যান করুন অথবা নিচের বাটনে ক্লিক করুন</p>
+                <img id="qrImg" src="" alt="QR" style="margin-bottom: 10px; width: 150px;">
                 <p><b>UPI: 8016957008@upi</b></p>
+                <a id="mobilePayBtn" href="#" class="btn-block btn-primary" style="background: #1e3799;">📲 সরাসরি পেমেন্ট অ্যাপ থেকে পে করুন</a>
             </div>
             <input type="text" id="trxIdInput" placeholder="Transaction ID (TrxID) দিন">
             <button class="btn-block btn-success" id="submitBtn" onclick="submitPayment()">পেমেন্ট তথ্য সাবমিট করুন</button>
@@ -127,13 +135,20 @@
             if(!currentMember) {
                 resDiv.innerHTML = "<p style='color:red;'>দুঃখিত, এই আইডি পাওয়া যায়নি!</p>";
             } else {
+                const amount = currentMember.dueYears * 200;
+                const upiLink = `upi://pay?pa=8016957008@upi&pn=Bardhaman%20Abhijan%20Gosthi&am=${amount}&cu=INR`;
+                
+                // সেট QR এবং পেমেন্ট বাটন
+                document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiLink)}`;
+                document.getElementById('mobilePayBtn').href = upiLink;
+
                 let html = `
                     <div class="info-card">
                         <p>👤 <b>নাম:</b> ${currentMember.name}</p>
                         <p>📍 <b>ঠিকানা:</b> ${currentMember.address || 'N/A'}</p>
                         <p>🎖️ <b>পদবী:</b> ${currentMember.designation || 'N/A'}</p>
                         <p>⏳ <b>বকেয়া:</b> ${currentMember.dueYears} বছর</p>
-                        <p style="color:var(--primary); font-size:18px;">💰 <b>মোট বকেয়া: ₹${currentMember.dueYears * 200}</b></p>
+                        <p style="color:var(--primary); font-size:18px;">💰 <b>মোট বকেয়া: ₹${amount}</b></p>
                     </div>`;
                 
                 if(currentMember.dueYears > 0) {
@@ -195,7 +210,7 @@
                         <p>✅ <b>পেমেন্ট স্ট্যাটাস:</b> ${m.paymentStatus || 'Pending'}</p>
                         <p>📋 <b>বিল বুক নং:</b> ${m.billBookNo || 'অপেক্ষমান'}</p>
                     </div>
-                    <button class="btn-block btn-primary" onclick="showFinalReceipt(${JSON.stringify(m).replace(/"/g, '&quot;')})">রসিদ দেখুন</button>`;
+                    <button class="btn-block btn-primary" onclick='showFinalReceipt(${JSON.stringify(m)})'>রসিদ দেখুন</button>`;
             }
         } catch (e) { resDiv.innerHTML = "সার্ভার এরর!"; }
     }
@@ -220,6 +235,26 @@
             ${stamp}
         `;
     }
+
+    function goBack() {
+    const paymentArea = document.getElementById('paymentArea');
+    const renewResult = document.getElementById('renewResult');
+    const receiptResult = document.getElementById('receiptResult');
+
+    // যদি পেমেন্ট কিউআর কোড বা সার্চ রেজাল্ট দেখা যায়, তবে আগে সেগুলো বন্ধ করবে
+    if (paymentArea.style.display === 'block' || renewResult.innerHTML !== "" || receiptResult.innerHTML !== "") {
+        paymentArea.style.display = 'none';
+        renewResult.innerHTML = "";
+        receiptResult.innerHTML = "";
+        document.getElementById('renewId').value = "";
+        document.getElementById('downloadId').value = "";
+    } 
+    // যদি একদম ফ্রেশ অবস্থায় থাকে, তবে index.html-এ চলে যাবে
+    else {
+        window.location.href = "index.html";
+    }
+}
+    
 
     function adminLogin() {
         const pass = prompt("অ্যাডমিন পাসওয়ার্ড দিন:");
