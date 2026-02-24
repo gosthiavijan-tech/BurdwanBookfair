@@ -6,11 +6,10 @@
     <title>পুরস্কার ও সম্মাননা - বর্ধমান অভিযান</title>
     <style>
         :root { 
-            --primary: #0f172a; /* আরও ডিপ নেভি ব্লু */
-            --secondary: #7f1d1d; /* আরও ডিপ রেড */
+            --primary: #0f172a; 
+            --secondary: #7f1d1d;
             --accent: #fbbf24;
-            --bg: #f8f9fa;
-            --btn-hover: #1e293b;
+            --bg: #f1f5f9;
         }
         
         body { 
@@ -30,7 +29,6 @@
             position: relative;
         }
 
-        /* ব্যাক বাটন ডিজাইন */
         .back-btn {
             position: absolute;
             top: 20px;
@@ -46,7 +44,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
         .back-btn:hover {
@@ -59,8 +57,7 @@
             color: var(--primary); 
             font-size: 2.5em;
             margin-bottom: 40px;
-            margin-top: 20px; /* ব্যাক বাটনের জন্য জায়গা */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            margin-top: 20px;
             position: relative;
         }
 
@@ -74,7 +71,6 @@
             border-radius: 2px;
         }
         
-        /* ট্যাব মেনু ডিজাইন - ডিপ কালার */
         .tab-menu { 
             display: flex; 
             flex-wrap: wrap; 
@@ -89,54 +85,46 @@
             border: 1px solid var(--primary);
             background: #fff; 
             color: var(--primary); 
-            font-weight: 700; /* ফন্ট আরও বোল্ড */
+            font-weight: 700; 
             border-radius: 12px; 
             transition: all 0.3s ease; 
             font-size: 15px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         
-        .tab-btn:hover {
-            background-color: #f1f5f9;
-            transform: translateY(-2px);
-        }
-
         .tab-btn.active { 
-            background: var(--primary); /* ক্লিক করলে ডিপ কালার */
+            background: var(--primary); 
             color: white; 
-            box-shadow: 0 8px 15px rgba(15, 23, 42, 0.3);
             border-bottom: 4px solid var(--accent);
         }
 
-        /* স্বাগতম বক্স */
-        .welcome-box {
-            text-align: center;
-            padding: 60px 20px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 15px;
-            background: #f8fafc;
-        }
-
-        /* টেবিল স্টাইল */
+        /* ফিক্সড হেডিং এর জন্য টেবিল র‍্যাপার স্টাইল */
         .table-wrapper { 
-            overflow-x: auto; 
+            max-height: 600px; /* টেবিলের উচ্চতা নির্দিষ্ট করা হয়েছে স্ক্রল করার জন্য */
+            overflow-y: auto; 
+            overflow-x: auto;
             border-radius: 10px;
+            border: 1px solid #e2e8f0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-top: 20px;
         }
         
         table { 
             width: 100%; 
-            border-collapse: collapse; 
+            border-collapse: separate; /* sticky হেডার বর্ডারের জন্য এটি ভালো */
+            border-spacing: 0;
             background: white;
         }
         
-        th { 
+        /* ফিক্সড হেডার লজিক */
+        thead th { 
             background: var(--primary); 
             color: white; 
             padding: 18px 15px; 
             text-align: left; 
             font-weight: 600;
+            position: sticky; /* হেডিং ফিক্সড করবে */
+            top: 0; /* একদম উপরে আটকে থাকবে */
+            z-index: 5;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.1); /* নিচের তথ্যের উপর শ্যাডো দেবে */
         }
         
         td { 
@@ -147,14 +135,22 @@
         }
         
         tr:nth-child(even) { background: #f8fafc; }
-        tr:hover { background: #f1f5f9; transition: 0.2s; }
+        tr:hover { background: #f1f5f9; }
+
+        .welcome-box {
+            text-align: center;
+            padding: 60px 20px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 15px;
+            background: #f8fafc;
+        }
 
         .status-msg { text-align: center; padding: 50px; font-size: 18px; color: #475569; font-weight: bold; }
 
         @media (max-width: 768px) {
-            .tab-btn { width: 100%; text-align: center; }
+            .tab-btn { width: 100%; }
             .container { padding: 20px; padding-top: 60px; }
-            .back-btn { width: calc(100% - 40px); text-align: center; justify-content: center; }
+            .table-wrapper { max-height: 450px; } /* মোবাইলে উচ্চতা কিছুটা কম */
         }
     </style>
 </head>
@@ -168,7 +164,7 @@
     <div class="tab-menu">
         <button class="tab-btn" onclick="loadSheet('0', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত দেবপ্রসন্ন পুরস্কার</button>
         <button class="tab-btn" onclick="loadSheet('1205965747', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত  শান্তি সাহা স্মৃতি গুণীজন সংবর্ধনা</button>
-        <button class="tab-btn" onclick="loadSheet('2125857118', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত সমীরণ চৌধুরী স্মৃতি অভিযান সাহিত্য ও সংস্কৃতি পুরস্কার </button>
+        <button class="tab-btn" onclick="loadSheet('2125857118', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত সমীরণ চৌধুরী স্মৃতি অভিযান সাহিত্য ও সংস্কৃতি পুরস্কার</button>
         <button class="tab-btn" onclick="loadSheet('1096819339', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত অভিযান সাহিত্য সম্মান</button>
         <button class="tab-btn" onclick="loadSheet('807355523', event)">বর্ধমান অভিযান গোষ্ঠী প্রদত্ত কৃষ্ণগোপাল কুণ্ডু স্মৃতি কবি সম্মান</button>
     </div>
@@ -176,7 +172,7 @@
     <div id="displayArea">
         <div class="welcome-box">
             <h3>স্বাগতম</h3>
-            <p>তথ্য দেখার জন্য উপরের যেকোনো একটি ট্যাবে ক্লিক করুন।</p>
+            <p>তথ্য দেখার জন্য উপরের ট্যাবগুলোতে ক্লিক করুন। </p>
         </div>
     </div>
 </div>
