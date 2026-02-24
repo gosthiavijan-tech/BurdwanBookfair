@@ -19,24 +19,54 @@
             background-size: cover; background-position: center;
             height: 100px; display: flex; justify-content: center; align-items: center;
             color: white; border-bottom: 4px solid #ffcc00;
+            text-align: center; padding: 0 10px;
         }
+
+        header h1 { font-size: 1.5rem; }
 
         .main-layout { display: flex; flex: 1; max-width: 1400px; margin: 20px auto; width: 95%; gap: 20px; }
 
+        /* সাইডবার ডিজাইন */
         .sidebar { width: 280px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 12px; height: fit-content; }
 
-        .back-btn { background: #d63031; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 10px; transition: 0.3s; }
+        .back-btn { background: #d63031; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 10px; transition: 0.3s; width: 100%; }
         .back-btn:hover { background: #ae2021; }
 
-        .tab-btn { padding: 12px 15px; border: 2px solid #1a2a6c; border-radius: 10px; background: white; color: #1a2a6c; cursor: pointer; font-weight: 600; text-align: left; transition: 0.3s; }
+        .tab-btn { padding: 12px 15px; border: 2px solid #1a2a6c; border-radius: 10px; background: white; color: #1a2a6c; cursor: pointer; font-weight: 600; text-align: left; transition: 0.3s; width: 100%; }
         .tab-btn.active { background: #1a2a6c; color: white; }
 
+        /* কন্টেন্ট এরিয়া */
         .content-area { flex: 1; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; min-height: 600px; }
 
         .doc-wrapper { display: none; width: 100%; height: 100%; padding: 20px; }
         .doc-wrapper.active { display: block; animation: fadeIn 0.5s ease; }
 
-        iframe { width: 100%; height: 80vh; border: none; border-radius: 10px; }
+        iframe { width: 100%; height: 75vh; border: none; border-radius: 10px; }
+
+        /* মোবাইল রেসপনসিভনেস (Media Query) */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column; /* কলাম অনুযায়ী সাজাবে */
+                margin: 10px auto;
+            }
+
+            .sidebar {
+                width: 100%; /* সাইডবার পুরো স্ক্রিন জুড়ে থাকবে */
+                order: 1;    /* উপরে দেখাবে */
+            }
+
+            .content-area {
+                width: 100%;
+                order: 2;    /* নিচে দেখাবে */
+                min-height: 500px;
+            }
+
+            header h1 { font-size: 1.2rem; }
+            
+            iframe { height: 60vh; } /* মোবাইলে হাইট কিছুটা কমানো হয়েছে */
+
+            .doc-wrapper { padding: 10px; }
+        }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @media print { body { display: none; } }
@@ -69,24 +99,21 @@
 
         <div id="doc3" class="doc-wrapper">
             <div style="padding: 40px; text-align: center; color: #666;">
-                <h3>স্মৃতিচারণ অংশটি এখনো যুক্ত করা হয়নি।</h3>
+                <h3>স্মৃতিচারণ অংশটি এখনো যুক্ত করা হয়নি।</h3>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // আগের পেজে ফিরে যাওয়ার ফাংশন
     function goBack() {
         if (document.referrer !== "") {
             window.history.back();
         } else {
-            // যদি আগের কোনো হিস্ট্রি না থাকে, তবে একটি নির্দিষ্ট পেজে পাঠাবে
             window.location.href = "history.html"; 
         }
     }
 
-    // ট্যাব পরিবর্তনের ফাংশন
     function openDoc(evt, docId) {
         var contents = document.getElementsByClassName("doc-wrapper");
         for (var i = 0; i < contents.length; i++) {
@@ -100,9 +127,13 @@
         
         document.getElementById(docId).classList.add("active");
         evt.currentTarget.classList.add("active");
+
+        // মোবাইলে ট্যাব ক্লিক করলে স্ক্রল করে নিচে কন্টেন্টে নিয়ে যাবে
+        if (window.innerWidth <= 768) {
+            document.querySelector('.content-area').scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
-    // কীবোর্ড শর্টকাট সুরক্ষা
     document.onkeydown = function(e) {
         if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 80)) {
             return false;
