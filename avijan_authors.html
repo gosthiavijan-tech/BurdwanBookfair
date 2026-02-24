@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লেখক পরিচিতি - বর্ধমান বইমেলা</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: #f0f2f5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header {
+            background: linear-gradient(rgba(26, 42, 108, 0.9), rgba(42, 72, 88, 0.9));
+            height: 100px; display: flex; justify-content: center; align-items: center;
+            color: white; border-bottom: 4px solid #ffcc00; flex-shrink: 0;
+        }
+
+        .main-layout { display: flex; flex: 1; max-width: 1400px; margin: 20px auto; width: 95%; gap: 20px; overflow: hidden; }
+
+        /* বাম পাশের মেনু */
+        .sidebar { 
+            width: 300px; background: white; padding: 20px; border-radius: 15px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; 
+            flex-shrink: 0; overflow-y: auto;
+        }
+
+        /* বাটনগুলোকে নিচে নিচে রাখার জন্য কন্টেইনার */
+        #btnContainer {
+            display: flex;
+            flex-direction: column; /* নামগুলো নিচে নিচে বসাবে */
+            gap: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #1a2a6c; border-radius: 10px; }
+
+        .back-btn { 
+            background: #d63031; color: white !important; padding: 12px; 
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; 
+            text-align: center; text-decoration: none; margin-bottom: 15px; transition: 0.3s;
+            display: block; flex-shrink: 0;
+        }
+        .back-btn:hover { background: #1a2a6c; }
+
+        .author-btn { 
+            width: 100%; /* বাটনটি পুরো চওড়া হবে */
+            padding: 12px 15px; border: 2px solid #1a2a6c; border-radius: 10px; 
+            background: white; color: #1a2a6c; cursor: pointer; font-weight: 600; 
+            text-align: left; transition: 0.3s; display: block;
+        }
+        .author-btn.active { background: #1a2a6c; color: white; }
+        .author-btn:hover:not(.active) { background: #f0f2f5; }
+
+        /* ডান পাশের কন্টেন্ট */
+        .content-area { flex: 1; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow-y: auto; }
+        .author-detail { display: none; animation: fadeIn 0.5s; }
+        .author-detail.active { display: block; }
+
+        #loader { text-align: center; font-weight: bold; color: #1a2a6c; margin-top: 20px; }
+
+        h2 { color: #1a2a6c; border-bottom: 2px solid #ffcc00; display: inline-block; margin-bottom: 20px; }
+        .bio { font-size: 1.1rem; line-height: 1.8; text-align: justify; color: #444; white-space: pre-line; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; overflow: auto; }
+            .sidebar { width: 100%; height: auto; max-height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<header><h1>অভিযান সাময়িকীর লেখক পরিচিতি</h1></header>
+
+<div class="main-layout">
+    <div class="sidebar" id="sidebarMenu">
+        <a href="history.html" class="back-btn">← মেলার ইতিহাস</a>
+        <div id="btnContainer">
+            </div>
+    </div>
+
+    <div class="content-area" id="contentArea">
+        <div id="loader">লেখকদের তথ্য লোড হচ্ছে...</div>
+    </div>
+</div>
+
+<script>
+    // আপনার Apps Script URL টি এখানে দিন
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyhKqkPpOBVR97Ry4Dymyfzj2tCzU3rofbIQ9AjaA1FofRQRTL1Oj6zl-WNehOi20u8/exec';
+
+    async function fetchAuthors() {
+        try {
+            const response = await fetch(scriptUrl);
+            const data = await response.json();
+            renderAuthors(data);
+        } catch (error) {
+            document.getElementById('loader').innerText = 'তথ্য লোড করতে ব্যর্থ হয়েছে।';
+            console.error(error);
+        }
+    }
+
+    function renderAuthors(authors) {
+        const btnContainer = document.getElementById('btnContainer');
+        const contentArea = document.getElementById('contentArea');
+        btnContainer.innerHTML = '';
+        contentArea.innerHTML = '';
+
+        authors.forEach((author, index) => {
+            // বাটন তৈরি
+            const btn = document.createElement('button');
+            btn.className = 'author-btn' + (index === 0 ? ' active' : '');
+            btn.innerText = author.name;
+            btn.onclick = (e) => showAuthor(e, 'auth' + index);
+            btnContainer.appendChild(btn);
+
+            // কন্টেন্ট তৈরি
+            const detail = document.createElement('div');
+            detail.id = 'auth' + index;
+            detail.className = 'author-detail' + (index === 0 ? ' active' : '');
+            detail.innerHTML = `<h2>${author.name}</h2><p class="bio">${author.bio}</p>`;
+            contentArea.appendChild(detail);
+        });
+    }
+
+    function showAuthor(evt, id) {
+        document.querySelectorAll('.author-detail').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.author-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        evt.currentTarget.classList.add('active');
+        
+        // মোবাইল স্ক্রিনে কন্টেন্ট দেখার সুবিধার্থে অটো স্ক্রল (ঐচ্ছিক)
+        if (window.innerWidth <= 768) {
+            document.getElementById('contentArea').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    window.onload = fetchAuthors;
+</script>
+
+</body>
+</html>

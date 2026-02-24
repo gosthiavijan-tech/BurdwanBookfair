@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সম্পাদকের কলমে - বর্ধমান বইমেলা</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Hind Siliguri', sans-serif; 
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
+        }
+        
+        body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; }
+
+        header {
+            background: linear-gradient(rgba(26, 42, 108, 0.9), rgba(42, 72, 88, 0.9)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center;
+            height: 100px; display: flex; justify-content: center; align-items: center;
+            color: white; border-bottom: 4px solid #ffcc00;
+        }
+
+        .main-layout { display: flex; flex: 1; max-width: 1400px; margin: 20px auto; width: 95%; gap: 20px; }
+
+        .sidebar { width: 280px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 12px; height: fit-content; }
+
+        .back-btn { background: #d63031; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 10px; transition: 0.3s; }
+        .back-btn:hover { background: #ae2021; }
+
+        .tab-btn { padding: 12px 15px; border: 2px solid #1a2a6c; border-radius: 10px; background: white; color: #1a2a6c; cursor: pointer; font-weight: 600; text-align: left; transition: 0.3s; }
+        .tab-btn.active { background: #1a2a6c; color: white; }
+
+        .content-area { flex: 1; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; min-height: 600px; }
+
+        .doc-wrapper { display: none; width: 100%; height: 100%; padding: 20px; }
+        .doc-wrapper.active { display: block; animation: fadeIn 0.5s ease; }
+
+        iframe { width: 100%; height: 80vh; border: none; border-radius: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @media print { body { display: none; } }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<header>
+    <h1>সম্পাদকের কলমে</h1>
+</header>
+
+<div class="main-layout">
+    <div class="sidebar">
+        <button class="back-btn" onclick="goBack()">← ফিরে যান</button>
+        
+        <button class="tab-btn active" onclick="openDoc(event, 'doc1')">বইমেলার পঁচিশ বছর (২০০২)</button>
+        <button class="tab-btn" onclick="openDoc(event, 'doc2')">সম্পাদকের অন্য লেখা</button>
+        <button class="tab-btn" onclick="openDoc(event, 'doc3')">অভিযান গোষ্ঠীর স্মৃতি</button>
+    </div>
+
+    <div class="content-area">
+        <div id="doc1" class="doc-wrapper active">
+            <iframe src="https://docs.google.com/document/d/e/2PACX-1vShfi5WA4cGMZLwP8RVC2aOjQDS5DA_noxhAvZ4eS3SJIQmAq7PUceVVGbFVchyFL09hixthwWui4TQ/pub?embedded=true"></iframe>
+        </div>
+
+        <div id="doc2" class="doc-wrapper">
+            <h3 style="margin-bottom: 15px; color: #1a2a6c;">শীঘ্রই আসছে</h3>
+            <iframe src="https://docs.google.com/document/d/e/2PACX-1vQ4OJxwJy0azuDEiAk0s-vgKgd_4_yKgD2WOG9y70TIlxrbpPSC-7zVluQZ9QYiMj91kaJR2M9jI9FN/pub?embedded=true"></iframe>
+        </div>
+
+        <div id="doc3" class="doc-wrapper">
+            <div style="padding: 40px; text-align: center; color: #666;">
+                <h3>স্মৃতিচারণ অংশটি এখনো যুক্ত করা হয়নি।</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // আগের পেজে ফিরে যাওয়ার ফাংশন
+    function goBack() {
+        if (document.referrer !== "") {
+            window.history.back();
+        } else {
+            // যদি আগের কোনো হিস্ট্রি না থাকে, তবে একটি নির্দিষ্ট পেজে পাঠাবে
+            window.location.href = "history.html"; 
+        }
+    }
+
+    // ট্যাব পরিবর্তনের ফাংশন
+    function openDoc(evt, docId) {
+        var contents = document.getElementsByClassName("doc-wrapper");
+        for (var i = 0; i < contents.length; i++) {
+            contents[i].classList.remove("active");
+        }
+        
+        var tabs = document.getElementsByClassName("tab-btn");
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove("active");
+        }
+        
+        document.getElementById(docId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // কীবোর্ড শর্টকাট সুরক্ষা
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 80)) {
+            return false;
+        }
+    };
+</script>
+
+</body>
+</html>

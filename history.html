@@ -12,7 +12,7 @@
         header {
             background: linear-gradient(rgba(26, 42, 108, 0.8), rgba(42, 72, 88, 0.8)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80');
             background-size: cover; background-position: center;
-            height: 250px; display: flex; justify-content: center; align-items: center;
+            height: 200px; display: flex; justify-content: center; align-items: center;
             color: white; text-align: center; border-bottom: 5px solid #ffcc00;
         }
 
@@ -20,196 +20,133 @@
             max-width: 1100px; margin: -50px auto 60px; 
             background: white; padding: 40px; border-radius: 15px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
+            position: relative;
         }
+
+        .home-back-btn {
+            display: inline-block; margin-bottom: 20px; padding: 8px 18px;
+            background-color: #d63031; color: white; text-decoration: none;
+            border-radius: 5px; font-weight: bold; font-size: 0.9rem; transition: 0.3s;
+        }
+        .home-back-btn:hover { background-color: #1a2a6c; transform: translateX(-5px); }
 
         .tab-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
         .tab-btn {
             padding: 10px 20px; background: #f8f9fa; border: 2px solid #1a2a6c;
             color: #1a2a6c; font-weight: bold; cursor: pointer; border-radius: 30px; transition: 0.3s;
+            text-decoration: none; display: inline-block;
         }
-        .tab-btn.active, .tab-btn:hover { background: #1a2a6c; color: white; box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3); }
+        /* বাটন নীল হওয়ার স্টাইল */
+        .tab-btn.active { background: #1a2a6c !important; color: white !important; }
 
         .content-section { display: none; animation: fadeIn 0.5s; }
         .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { color: #1a2a6c; margin-bottom: 20px; border-bottom: 2px solid #ffcc00; display: inline-block; padding-bottom: 5px; }
-        p { margin-bottom: 20px; text-align: justify; color: #444; font-size: 1.05rem; }
-
-        .filter-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px; margin-bottom: 20px; background: #f1f3f8; padding: 20px; border-radius: 10px;
-        }
-        .filter-group { display: flex; flex-direction: column; }
-        .filter-group label { font-size: 0.9rem; font-weight: bold; color: #1a2a6c; margin-bottom: 5px; }
-        .filter-group select { padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: white; outline: none; }
-
-        .table-scroll {
-            max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;
-        }
-        table { width: 100%; border-collapse: collapse; position: relative; }
-        thead th {
-            position: sticky; top: 0; background-color: #1a2a6c; color: white;
-            z-index: 10; padding: 15px; text-align: left;
-        }
-        td { padding: 12px; border: 1px solid #ddd; text-align: left; font-size: 0.95rem; }
+        .filter-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; background: #f1f3f8; padding: 20px; border-radius: 10px; }
+        .table-scroll { max-height: 500px; overflow-y: auto; border: 1px solid #ddd; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { position: sticky; top: 0; background-color: #1a2a6c; color: white; padding: 15px; text-align: left; z-index: 10; }
+        td { padding: 12px; border: 1px solid #ddd; font-size: 0.9rem; }
         tr:nth-child(even) { background-color: #f9f9f9; }
 
-        .back-btn {
-            display: inline-block; margin-top: 30px; padding: 12px 30px;
-            background: #d63031; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s;
-        }
-        footer { text-align: center; padding: 30px; background: #1a2a6c; color: white; margin-top: 40px; }
+        #loader { text-align: center; padding: 20px; font-weight: bold; color: #1a2a6c; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>বর্ধমানের ঐতিহ্য ও ইতিহাস</h1>
-    </header>
+<header><h1>বর্ধমানের ঐতিহ্য ও ইতিহাস</h1></header>
 
-    <div class="container">
-        <div class="tab-menu">
-            <button class="tab-btn active" onclick="showTab('editor')">সম্পাদকীয়</button>
-            <button class="tab-btn" onclick="showTab('author')">অভিযান সাময়িকীর লেখক পরিচিতি</button>
-            <button class="tab-btn" onclick="showTab('history')">স্থান, কাল ও উদ্বোধক</button>
-            <button class="tab-btn" onclick="window.location.href='Organizational_Chart.html'">কার্যকারী সদস্য</button>
-        </div>
+<div class="container">
+    <a href="index.html" class="home-back-btn">← হোম পেজে ফিরে যান</a>
 
-        <div id="editor" class="content-section active">
-            <h2>বইমেলার পঁচিশ বছর</h2>
-            <p>সত্যজিতের পথের পাঁচালি মনে আছে? আগের দিন রাতে যাত্রা দেখে পরের দিন অপূর রাজা সাজা। মাথায় মুকুট, হাতে তীর ধনুক, নাকের তলায় গোঁফ। প্রভাত। গ্রামের বালক, তার কাছে রাজা সাজাটাই আনন্দের। এবার একালের ছেলের একটা গল্প বলি। আমার পরিচিত এক ভদ্রমহিলা, কোনও একটি কলেজে পড়ান, তার স্বামীও তাই। বাড়িতে একা থাকে ছেলে এবং কাজের মেয়ে। বাবা মা কলেজ চলে গেলে তাদের তাকে তোলা বই পেতে মায়ের কাপড় উঠিয়ে স্টুল করে বই কেনা-বেচায় মেতে ওঠে ছেলে। কাজের লোকের প্রতি কটু আদেশ সে যেন কাগজ ছিঁড়ে চিরকুট কেটে ধরে ছোটে। এ যুগের সর্বজয়া বাড়ি ফিরে অবাক, মায়ের ভয়ে ছেলের বাবার কোলে আশ্রয়। মায়ের বকুনি, কিন্তু বাবার প্রশ্রয়। বাবাই তাকে নিয়ে গিয়েছিলেন আগের দিন চুঁচুড়া হল, বর্ধমান বইমেলায়। সেখান থেকেই এই বইমেলা, বইমেলা খেলার ভাবনা।</p>
-
-        <p>আমরা বোকা বাঙালির কু-প্রভাব নিয়ে কথা বলি। বলি না বিকল্প ভাবনা - কটি - শিশুদের কি দিতে পারি। টি.ভি. যে সব সময় খারাপই কিছু শেখায় এই মতবাদে বিশ্বাসী না হয়েও বলতে পারি তার খারাপ প্রভাব কাটাতে অন্য কিছু শেখাতে মানুষকে বিশেষত ছোটদের বা তরুণদের মাতাতে হবে। বই পড়ার নেশা মারাত্মক, এ নেশায় মাতাতে পারলে দেশ এমনিতেই গড় গড় করে এগিয়ে চলবে। হয়তো বই চলে যাবে নতুনকে আহ্বান জানাতে আগামী প্রজন্ম কোলে তুলে নেবে বইয়ের পরিবর্তে ল্যাপটপ। আসলকথা তো জ্ঞানচর্চা, মাধ্যম যাইহোক তবু বলব বই থাকবে, আংশিক ভাবে থাকলেও তাকে এড়িয়ে যাওয়ার কোনও উপায় নেই। বই-ই তো জীবনের বৈতরণী। তাই বলছিলাম যে শিশুটি বইমেলা দেখে প্রভাবিত হয়ে বাড়িতে বই কেনা, বই কেনা খেলে, তাকে খেলতে দিন। খেলতে খেলতে যদি বইয়ের প্রতি ভালবাসা জমায় সেও হবে মহৎ খেলা। ‘মরা’-‘মরা’ বলতে বলতে তো ‘রাম’ ‘রাম’ উচ্চারিত হয়।</p>
-
-        <p>বইমেলার মাঠে ঘুরে বেড়ালে শান্তি আসে, পরিবেশও প্রীতি অনেক। বইমেলায় শুধু মেলা বই-ই নয়, মেলা-মেশার সুযোগ থাকে। এ যেন পরমাণুদের চরণ, বিচরণ। বর্ধমানের এ কয়েকটা দিন যেন শুঁড়ির মেজাজ। এখন যেন শীতের অনুষঙ্গ, বইমেলা। শীত আসছে, বইমেলাও আসছে। বই বক্তৃতাদের এ যেন চাকে চাওয়া অবসান। সব বই মেলায় নেই, কিন্তু প্রতিবছরই বলি যা দিচ্ছে, যা পেয়েছি তা তুলনাহীন। বর্ধমান বইমেলা কি শুধু বই কেনা বেচার বাজার? এ প্রশ্ন পুরনো। বই শুধু বর্ধমানের নয়, বিশ্বলোকের ভাষা। যিনি যে পেশাতেই থাকুন না কেন বই সমানুভূতিরই বাঁধন; সভ্যতা, শিল্প, সংস্কৃতি থেকে ইতিহাস অর্থনীতি এমনকি হৃদয়াঙ্গমের উন্মীলন — সবই বই বিধৃত। বইয়ের অন্তর সবকিছুই প্রাসঙ্গিক। সুতরাং সেই পথ যা আমাদের উৎকর্ষ বাড়ায়, বেঁচে থাকার আনন্দ দেয় তা আর পাঁচটা জিনিসের মত নয়। এ বাজার ঘরে ঘরে বসলে মন্দ না।</p>
-
-        <p>একবার এক অবাঙালি জেলা শাসকের স্ত্রীর ইচ্ছায় কলকাতা থেকে রবীন্দ্রনাথের স্বরলিপির বই কিনে এনে দিয়েছিলাম। স্থানীয় একটা পত্রিকায় ব্যঙ্গ করে লিখেছিল, আমি নাকি মাথায় করে বইটি তাঁর বাংলোয় পৌঁছে দিয়েছি। আমি উত্তরে বলেছিলাম, মূর্খ জানো না, সত্যিই ঘরে ঘরে যদি মাথায় করে রবীন্দ্রনাথের বই পৌঁছে দিতে পারতাম, তাহলে আমার জীবন ধন্য হত। সেরকমই বলি বইমেলা যদি বই বাজারও হয়, সে বাজার যেন অলিতে গলিতে হয়। আমাদের সেই স্বপ্ন সার্থক হয়েছে। মহকুমা মুফস্বলেও বইমেলা করার দৃষ্টান্ত আমরা দেখিয়েছিলাম। এখন আমাদের অনেক পরে সরকার জেলা বইমেলার সূচনাও করেছেন। ইতিমধ্যে মহকুমা শহর থেকে বড়, ছোট, সব শহরে বইমেলা শুরু হয়েছে। পশ্চিমবঙ্গেই বোধহয় একমাত্র এত মানুষ বইয়ের জন্য একটা মেলায় ছুটে যায়। বইমেলার মাঠে হয়ে ওঠে প্রাণের আরাম, আত্মার শান্তি।</p>
-
-        <div class="section-title">অভিযান গোষ্ঠীর পথচলা</div>
-        <p>পুরনো কথায় ফিরে যাই, বইমেলা তবে বর্ধমানে? আশাপ্রদ বর্ধমান বইমেলার পরিচালন সংগঠন ‘অভিযান গোষ্ঠী’। লোক টানার জন্য সরস্বতী পুজোর দিন শুরু হয়। এও এক সারস্বত সাধনা। ১৯৭৯, ১ ফেব্রুয়ারি শ্রী পঞ্চমীতে স্থানীয় টাউন হলের দক্ষিণ দিকে মাঠে এক বড় শিমুলগাছের তলায় এই ঐতিহাসিক পালাবদলের শুরু। ঐতিহাসিক এই কারণে, জ্ঞানের যে একক মশাল সেদিন জ্বালানো হয়েছিল, আজ দিকে দিকে সে আলো ছড়িয়ে পড়েছে। শুধু বই কেনা বেচার ক্ষেত্রে নয় স্থানীয় মানুষের নানা বিষয়ালোচনার উদ্রেক করেছে, সৃষ্টিশীল কলাশাখায় উন্মেষ ঘটিয়েছে। বইমেলার মঞ্চ এখন আর শুধু বিদ্যালয়ের পাঠ্য যোগান ব্যবস্থার অংশ নয়, বিদ্যা প্রসারণেও পীঠস্থান হয়ে দাঁড়িয়েছে। বর্ধমানের বহু মানুষ, ছাত্র-শিক্ষক রাজনৈতিক একতা প্ল্যাটফর্মে একত্রিত হয়েছেন। শতাধিক বাঙালি, ধর্ম, রাজনীতি, কুল গোত্র ভুলে বইমেলার মঞ্চে একসাথে বসে মত বিনিময় করেছেন— এ এক গর্বের কথা বটে।</p>
-
-        <p>উদ্যোগীদের সূত্রে পাওয়া এই পুঁচকে বর্ধমান বইমেলার সূত্র এক উল্লেখযোগ্য মোড় ফেরাল। ভারতে অবাক লাগে, ২৪/২৫ বছর আগে মাত্র ১৫টি স্টল নিয়ে ৪ দিনের মেলা আয়োজন করে যে যাত্রা শুরু তা আজ এক আন্দোলনে পরিণত হয়েছে। আরও আনন্দের কথা, প্রায় আড়াই বাঙালির ছেলেরা একসঙ্গে কাজ করতে জানে না! বর্ধমান বইমেলায় প্রায় একই টিম দীর্ঘ এতগুলি বছর একসঙ্গে কাজ করে চলেছে। বেসরকারি সংগঠন টিকে থাকার আরও একটি বড় শর্ত নতুনকে আসতে দেওয়া। তবুও নজির আছে আমাদের কাছে। বর্ধমান বইমেলা কমিটির মধ্যে এমন সদস্যও বর্তমানে বিরল নন যিনি বইমেলার প্রথম বছরে পৃথিবীর আলো দেখেছিলেন। সুতরাং পুরনো ও নতুনের এই অভূতপূর্ব সমন্বয় রীতিমতো বিস্ময়কর। কী সেই যাদু?</p>
-
-        <p>আমরা বর্ধমানবাসী। বর্ধমানের কোনও উন্নতি আমাদেরও যেমন উন্নতি, আবার সারা রাজ্যেরও উন্নতি। বর্ধমানে নিয়ন্ত্রিত সাহিত্য পত্রিকা ‘অভিযান সাময়িকী’ প্রকাশ, সহযোগী সংগঠন বর্ধমান সমতালের সঙ্গে যৌথ উদ্যোগে বর্ধমানকে ত্রিশটি মানচিত্রে আনতে হবে এই স্লোগান দিয়ে ব্রতধারীদের ছবিযুক্ত রঙিন পিকচার পোস্টকার্ড প্রকাশ, বর্ধমানের এক অধ্যাপক গাইড বই ‘বর্ধমান সহায়িকা’ প্রকাশ, কেবল টিভিতে সংবাদ পরিবেশন এবং অফসেটে ছেপে কাগজের প্রকাশ— সর্বই সুস্থ ভাবনা চিন্তার ফল। বর্ধমানের তরুণ শিল্প প্রতিভাকে তুলে ধরার জন্য অভিযান সংস্কৃতি মঞ্চ স্থাপন কিংবা নিয়মিত বর্ধমান চর্চা করে ‘শনি সন্ধ্যা বৈঠক’ আয়োজন এবং এক বিশাল বর্ধমান সংগ্রহ গবেষণা গ্রন্থ প্রকাশ— সর্বই বর্ধমান বইমেলার প্রেরণায় ধারার শাখা বিস্তার। প্রত্যেক ব্যক্তি বা প্রতিষ্ঠানকে সমাজ ও সংস্কৃতিতে অবদানের জন্য দেবপ্রসাদ পুরস্কার দেওয়ার প্রবর্তন, বইমেলার মঞ্চে বয়োজ্যেষ্ঠ মন্ত্রিপরিষদকে সম্মান দেওয়া— এই শহর, এই জেলার কিংবা পার্শ্ববর্তী স্থানের মানুষজনের অকৃত্রিম ভালোবাসার প্রমাণ না পেলে এ কাজ সম্ভব হতো না।</p>
-
-        <div class="section-title">২৫ বছরের প্রাপ্তি ও ভবিষ্যৎ</div>
-        <p>আজ বর্ধমান বইমেলা বন্ধ হয়ে গেলেও দুঃখ নেই, কারণ যে একক মশাল অভিযানের কুঠারিরায় জ্বালিয়েছিল তা আজ দিকে দিকে প্রজ্বলিত। চিন্তার আন্দোলন তো এমন করেই ছড়িয়ে পড়ে। বিপ্লবও নিশ্চুপেই হয়। সামষ্টিক ও প্রকৃত জ্ঞানই আমাদের এই অসহায় অবস্থা থেকে বাঁচাতে পারে। কোন একজন প্রমিথিউসের কাজ নয় তা, বহু জনের সম্মিলিত প্রয়াস প্রয়োজন। হ্যাঁ জোর গলায় বলি বইমেলা সেই ‘মুক্ত মঞ্চ’ যেখানে সোচ্চারে সবাই আওয়াজ তুলি, এ আঁধার তুমি বিদায় নাও। এবার এই বিশেষ সংখ্যাটি সম্পর্কে কিছু বলা প্রয়োজন। স্বাভাবিকভাবেই ২৫ বছরকে স্মরণীয় করে রাখতে বর্ধমান বইমেলার সহযোগী প্রতিষ্ঠান ‘অভিযান সাময়িকী’র এই বিশেষ সংখ্যা প্রকাশ।</p>
-
-        <p>লেখাগুলি নানা দিক থেকে ভাবা হয়েছে। তাতে শুধু বইমেলা নয়, অভিযান গোষ্ঠীর ইতিহাস, অভিযান পত্রিকার ক্রম বিকাশ, গোষ্ঠীর সঙ্গে ওতপ্রোতভাবে জড়িত এমন ব্যক্তি বা সাংবাদিকের দৃষ্টিকোণ থেকে দেখা ও লেখার পুনর্মূল্যায়ন, বর্ধমান বিশ্ববিদ্যালয়ের সঙ্গে নিবিড় সংযোগ প্রভৃতি সংক্ষিপ্তাকারে তুলে ধরা হয়েছে এই সংখ্যায়। রজতজয়ন্তী বর্ষে এরকম একটা ডকুমেন্টেশনের প্রয়োজন ছিল, সেই দায়বদ্ধতা থেকেই এই সংখ্যাটির প্রকাশ।</p>
-
-        <p><strong>প্রথম বইমেলার উদ্বোধন করেছিলেন কালীপদ সিংহ।</strong> আসুক আলো, আসুক প্রজ্ঞা। সকলের সম্পর্ক হোক ভালোবাসা।</p>
-	 
-            <p style="font-weight: bold; color: #1a2a6c;">— সম্পাদক সমীরণ চৌধুরী, ২০০২, বইমেলা বিশেষ সংখ্যা</p>
-        </div>
-
-        <div id="author" class="content-section">
-            <h2>অভিযান গোষ্ঠীর পথচলা</h2>
-            <p>বর্ধমানের ঐতিহ্য ও মেলার ইতিহাস নিয়ে এখানে বিস্তারিত থাকবে...</p>
-        </div>
-
-        <div id="history" class="content-section">
-            <h2>মেলার ইতিহাস (১ম - ৩৬তম বইমেলা)</h2>
-            <div class="filter-container">
-                <div class="filter-group"><label>সন</label><select id="filter-year" onchange="filterTable()"><option value="">সব বছর</option></select></div>
-                <div class="filter-group"><label>স্থান</label><select id="filter-place" onchange="filterTable()"><option value="">সব স্থান</option></select></div>
-                <div class="filter-group"><label>উদ্বোধক</label><select id="filter-guest" onchange="filterTable()"><option value="">সব উদ্বোধক</option></select></div>
-            </div>
-            <div class="table-scroll">
-                <table id="historyTable">
-                    <thead><tr><th>সন</th><th>তারিখ</th><th>স্থান</th><th>মঞ্চ</th><th>উদ্বোধক</th></tr></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <br>
-        <a href="index.html" class="back-btn">← মূল পাতায় ফিরে যান</a>
+    <div class="tab-menu">
+        <a href="editorial_details.html" class="tab-btn" id="btn-editorial">সম্পাদকীয়</a>
+        <a href="avijan_authors.html" class="tab-btn" id="btn-authors">অভিযান সাময়িকীর লেখক পরিচিতি</a>
+        <button class="tab-btn active" onclick="showTab(event, 'history')" id="btn-history">স্থান, কাল ও উদ্বোধক</button>
+        <a href="Organizational_Chart.html" class="tab-btn" id="btn-org">কার্যকারী সদস্য</a>
     </div>
 
-    <footer>
-        <p>&copy; ২০২৬ বইমেলা কমিটি | বর্ধমান অভিযান গোষ্ঠী</p>
-    </footer>
+    <div id="history" class="content-section active">
+        <h2>স্থান, কাল ও উদ্বোধক</h2>
+        <div class="filter-container">
+            <select id="yearFilter" onchange="applyFilters()"><option value="">সব বছর</option></select>
+            <select id="placeFilter" onchange="applyFilters()"><option value="">সব স্থান</option></select>
+        </div>
+        <div id="loader">ডাটা লোড হচ্ছে...</div>
+        <div class="table-scroll">
+            <table id="mainTable">
+                <thead>
+                    <tr>
+                        <th>ক্রম (তম)</th>
+                        <th>সন</th>
+                        <th>তারিখ</th>
+                        <th>স্থান</th>
+                        <th>মঞ্চ</th>
+                        <th>উদ্বোধক</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>
-    // আপনার আগের সব স্ক্রিপ্ট ডাটা এখানে থাকবে (initTable, filterTable, showTab)
-    const data = [
-        ["১৯৭৯", "১-৫ ফেব", "টাউন হল ময়দান", "-", "কালীপদ সিংহ"],
-        ["১৯৮০", "৮-১৮ ফেব", "টাউন হল ময়দান", "-", "কালীপদ সিংহ"],
-        ["১৯৮১", "৯-১৮ ফেব", "টাউন হল ময়দান", "-", "প্রমথনাথ বিশী"],
-        ["১৯৮১", "১৮-২৭ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "সুকুমার সেন"],
-        ["১৯৮২", "১৭-২৬ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "নচিকেতা ভরদ্বাজ"],
-        ["১৯৮৩", "৭-১৪ ডিসে", "ক্যাম্পিং গ্রাউন্ড", "-", "অমিতা সেন"],
-        ["১৯৮৪", "৬-১৬ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "ভবতোষ দত্ত"],
-        ["১৯৮৫", "২৭ ডিসে-৫ জানু", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "বিমলচন্দ্র বসাক"],
-        ["১৯৮৬", "৫-১৪ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "সুকুমার রায়মঞ্চ", "নিমাই সাধন বসু"],
-        ["১৯৮৭", "২৭ নভে-৬ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "অশীন দাশগুপ্ত"],
-        ["১৯৮৮", "২-১১ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "মোহিত ভট্টাচার্য"],
-        ["১৯৮৯", "৮-১৭ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "অসীম বর্মণ"],
-        ["১৯৯০", "৭-১৬ ডিসে", "টাউন স্কুল মাঠ", "-", "গৌরকিশোর ঘোষ"],
-        ["১৯৯১", "৬-১৫ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "বিদ্যাসাগর মঞ্চ", "সুভাষ মুখোপাধ্যায়"],
-        ["১৯৯২", "৪-১৩ ডিসে", "মিউনিসিপ্যাল হাইস্কুল মাঠ", "-", "অশোক মিত্র"],
-        ["১৯৯৩", "১০-১৯ ডিসে", "টাউন হল মাঠ", "-", "শঙ্করী প্রসাদ বসু"],
-        ["১৯৯৪", "২-১১ ডিসে", "টাউন হল মাঠ", "-", "অম্লান দত্ত"],
-        ["১৯৯৫", "১-১০ ডিসে", "টাউন হল মাঠ", "-", "শুভাপ্রসন্ন"],
-        ["১৯৯৬", "৬-১৫ ডিসে", "টাউন হল মাঠ", "-", "দেবাশিস সেন"],
-        ["১৯৯৭", "৫-১৪ ডিসে", "টাউন হল মাঠ", "তারাশঙ্কর মঞ্চ", "শিবনারায়ণ রায়"],
-        ["১৯৯৮", "৪-১৩ ডিসে", "টাউন হল মাঠ", "-", "হোসেনুর রহমান"],
-        ["১৯৯৯", "২৪ ডিসে-২ জানু", "টাউন হল মাঠ", "বনফুল মঞ্চ", "শংকর (সাহিত্যিক)"],
-        ["২০০০", "৮-১৭ ডিসে", "টাউন হল মাঠ", "সুকুমার সেন মঞ্চ", "নীরেন্দ্রনাথ চক্রবর্তী"],
-        ["২০০১", "৩০ নভে-৯ ডিসে", "উৎসব ময়দান", "প্র.না.বি মঞ্চ", "শঙ্কু মহারাজ"],
-        ["২০০২", "১১-২০ ডিসে", "উৎসব ময়দান", "কুমুদরঞ্জন মঞ্চ", "নিরুপম সেন"],
-        ["২০০৩", "২৮ নভে-৭ ডিসে", "উৎসব ময়দান", "শিবরাম-অচিন্ত্য মঞ্চ", "সুনীল গঙ্গোপাধ্যায়"],
-        ["২০০৪", "১০-১৯ ডিসে", "উৎসব ময়দান", "কোজাগর মঞ্চ", "বুদ্ধদেব গুহ"],
-        ["২০০৫", "৯-১৮ ডিসে", "উৎসব ময়দান", "পার্থিব মঞ্চ", "শীর্ষেন্দু মুখোপাধ্যায়"],
-        ["২০০৬", "৭-১৭ ডিসে", "উৎসব ময়দান", "উত্তরাধিকার মঞ্চ", "সমরেশ মজুমদার"],
-        ["২০০৭", "৭-১৬ ডিসে", "উৎসব ময়দান", "প্রতাপচন্দ্র মঞ্চ", "প্রতাপচন্দ্র চন্দ্র"],
-        ["২০০৮", "১২-২১ ডিসে", "উৎসব ময়দান", "অলৌকিক জলযান মঞ্চ", "অতীন বন্দ্যোপাধ্যায়"],
-        ["২০০৯", "১১-২০ ডিসে", "উৎসব ময়দান", "নবনীতা মঞ্চ", "নৃসিংহপ্রসাদ ভাদুড়ী"],
-        ["২০১০", "১০-১৯ ডিসে", "উৎসব ময়দান", "গীতাঞ্জলি মঞ্চ", "সোমেন্দ্রনাথ বন্দ্যোপাধ্যায়"],
-        ["২০১১", "০৯-১৮ ডিসে", "উৎসব ময়দান", "আচার্য প্রফুল্লচন্দ্র মঞ্চ", "আবুল বাশার"],
-        ["২০১২", "১৪-২৩ ডিসে", "উৎসব ময়দান", "স্বামী বিবেকানন্দ মঞ্চ", "স্বামী পূর্ণাত্মানন্দজী"],
-        ["২০১৩", "১৪-২৩ ডিসে", "উৎসব ময়দান", "জীবনের জলসাঘর মঞ্চ", "সুব্রত মুখোপাধ্যায়"]
-    ];
-
-    const tableBody = document.getElementById('tableBody');
-    const yearSelect = document.getElementById('filter-year');
-    const placeSelect = document.getElementById('filter-place');
-    const guestSelect = document.getElementById('filter-guest');
-
-    function initTable() {
-        let years = new Set(), places = new Set(), guests = new Set();
-        data.forEach(row => {
-            let tr = document.createElement('tr');
-            row.forEach(cell => {
-                let td = document.createElement('td'); td.textContent = cell; tr.appendChild(td);
-            });
-            tableBody.appendChild(tr);
-            years.add(row[0]); places.add(row[2]); guests.add(row[4]);
-        });
-        [...years].sort().forEach(y => yearSelect.add(new Option(y, y)));
-        [...places].sort().forEach(p => placeSelect.add(new Option(p, p)));
-        [...guests].sort().forEach(g => guestSelect.add(new Option(g, g)));
+async function fetchData() {
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxw0BixVV8OiG-U7QaEawfucnfieGj4brQ3RQpCKeCPy23mSvssaV3EbgwO7goWK2O7/exec';
+    try {
+        const response = await fetch(scriptUrl, { method: 'GET', mode: 'cors', redirect: 'follow' });
+        const data = await response.json();
+        displayTable(data);
+    } catch (error) {
+        document.getElementById('loader').innerText = 'ডাটা লোড করতে ব্যর্থ হয়েছে।';
     }
+}
 
-    function filterTable() {
-        let y = yearSelect.value, p = placeSelect.value, g = guestSelect.value;
-        let rows = tableBody.getElementsByTagName('tr');
-        for (let row of rows) {
-            let cells = row.getElementsByTagName('td');
-            let match = (!y || cells[0].textContent === y) && (!p || cells[2].textContent === p) && (!g || cells[4].textContent === g);
-            row.style.display = match ? "" : "none";
-        }
-    }
+function displayTable(data) {
+    const tbody = document.getElementById('tableBody');
+    const yearFilter = document.getElementById('yearFilter');
+    const placeFilter = document.getElementById('placeFilter');
+    let years = new Set();
+    let places = new Set();
+    tbody.innerHTML = '';
+    document.getElementById('loader').style.display = 'none';
 
-    function showTab(id) {
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row[0]||'-'}</td><td>${row[1]||'-'}</td><td>${row[2]||'-'}</td><td>${row[3]||'-'}</td><td>${row[4]||'-'}</td><td>${row[5]||'-'}</td>`;
+        tbody.appendChild(tr);
+        if(row[1]) years.add(row[1]);
+        if(row[3]) places.add(row[3]);
+    });
+    [...years].sort().forEach(y => yearFilter.add(new Option(y, y)));
+    [...places].sort().forEach(p => placeFilter.add(new Option(p, p)));
+}
 
-    window.onload = initTable;
+function applyFilters() {
+    const y = document.getElementById('yearFilter').value;
+    const p = document.getElementById('placeFilter').value;
+    document.querySelectorAll('#tableBody tr').forEach(row => {
+        const show = (!y || row.children[1].innerText === y) && (!p || row.children[3].innerText === p);
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+// ট্যাব পরিবর্তন এবং বাটন হাইলাইট করার ফাংশন
+function showTab(evt, id) {
+    // সব কন্টেন্ট সেকশন লুকানো
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    // সব বাটন থেকে active ক্লাস সরানো
+    document.querySelectorAll('.tab-menu .tab-btn').forEach(b => b.classList.remove('active'));
+    
+    // নির্দিষ্ট সেকশন দেখানো এবং বাটনে নীল রঙ দেওয়া
+    document.getElementById(id).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
+
+window.onload = fetchData;
 </script>
 </body>
 </html>
