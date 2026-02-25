@@ -20,6 +20,21 @@
         .status-Approved { background: #d4edda; }
         .status-Reject { background: #f8d7da; }
         select { padding: 4px; border-radius: 4px; }
+	.btn-logout { 
+            background: #2d3436; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .btn-logout:hover { background: #000; }
     </style>
 </head>
 <body>
@@ -35,6 +50,9 @@
             <option value="Reject">Reject</option>
         </select>
         <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+	<button class="btn-logout" onclick="logoutAdmin()">
+            🚪 লগ-আউট
+        </button>
     </div>
 </div>
 
@@ -52,7 +70,13 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPOZqkgRYJ85NSkSN0lODTt2ODc6CAlOWqjAM_7zjl7acrPq7aJ_h2S2FoQPRhgphPlw/exec"; 
     let mainData = [];
-
+	 
+	function logoutAdmin() {
+        if(confirm("আপনি কি নিশ্চিতভাবে লগ-আউট করতে চান?")) {
+            // সেশন ক্লিয়ার করার মতো কোনো কাজ থাকলে এখানে করা যায়
+            window.location.href = "news.html"; // এটি ইউজারকে মেলার আপডেট পাতায় পাঠিয়ে দেবে
+        }
+    }
     // ১. ডাটা লোড ফাংশন
     async function loadData() {
         try {

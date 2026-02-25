@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিভিন্ন প্রতিযোগিতা - বর্ধমান বইমেলা</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
+        
+        h1 { color: #27ae60; text-align: center; margin-bottom: 30px; border-bottom: 3px solid #27ae60; padding-bottom: 10px; }
+        
+        .comp-card { background: #fff; border: 1px solid #e0e0e0; border-left: 6px solid #27ae60; padding: 20px; margin-bottom: 15px; border-radius: 8px; transition: 0.3s; }
+        .comp-card:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .comp-title { font-size: 20px; color: #2c3e50; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .comp-details { font-size: 16px; color: #555; line-height: 1.6; }
+        .category { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 2px 10px; border-radius: 4px; font-size: 14px; margin-top: 5px; font-weight: bold; }
+
+        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #1e90ff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .back-btn:hover { background: #0077e6; }
+
+        /* গোপন লিঙ্ক স্টাইল */
+        .hidden-admin-link {
+            display: block;
+            text-align: right;
+            margin-top: 15px;
+            color: #dcdde1; /* একদম হালকা রঙ */
+            text-decoration: none;
+            font-size: 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            opacity: 0.5;
+        }
+        .hidden-admin-link:hover { opacity: 1; color: #bdc3c7; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🏆 বইমেলার বিভিন্ন প্রতিযোগিতা</h1>
+
+        <div class="comp-card">
+            <div class="comp-title">📜 সুধীর চন্দ্র কোনার ও আব্দুল ওদুদ মিদ্যে স্মৃতি আবৃত্তি প্রতিযোগিতা</div>
+            <div class="comp-details">
+                <span class="category">বিভাগ 'ক': কেজি থেকে চতুর্থ শ্রেণী</span>
+                <br><small>সময়: বিকাল ৪:০০</small><br>
+                <span class="category">বিভাগ 'খ': পঞ্চম থেকে দশম শ্রেণী</span>
+                <br><small>সময়: বিকাল ৫:০০</small> 
+            </div>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-title">🎤 কামাখ্যা প্রসাদ চট্টোপাধ্যায় স্মৃতি বিতর্ক প্রতিযোগিতা</div>
+            <div class="comp-details">
+                <strong>বিষয়:</strong><span class="category">জীবনে প্রতিষ্ঠা পেতে পাঠক্রমের পড়াশোনাই যথেষ্ট।</span> 
+                <br><small>সময়: বিকাল ৪:০০</small>
+            </div>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-title">🗣️ বিদ্যানন্দ চৌধুরী তাৎক্ষণিক বক্তৃতা প্রতিযোগিতা</div>
+            <div class="comp-details">মেলা প্রাঙ্গণে তাৎক্ষণিক বিষয় ভিত্তিক বক্তৃতা।</div>
+            <br><small>সময়: বিকাল ৫:০০</small>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-title">🧠 অনিল কুমার বন্দ্যোপাধ্যায় স্মৃতি কুইজ প্রতিযোগিতা</div>
+            <div class="comp-details">সাধারণ জ্ঞান ও সাহিত্য বিষয়ক কুইজ।</div>
+            <br><small>সময়: দুপুর ২:০০</small>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-title">🎨 ডাঃ শৈলেন্দ্রনাথ মুখোপাধ্যায় স্মৃতি বসে আঁকো প্রতিযোগিতা</div>
+            <div class="comp-details">মেলা প্রাঙ্গণে বসে ছবি আঁকা।</div>
+            <br><small>সময়: সকাল ৯:০০</small>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-title">🎭 আশীষ গুহ স্মৃতি - যেমন খুশি সাজো প্রতিযোগিতা</div>
+            <div class="comp-details">বাচ্চাদের জন্য আকর্ষণীয় পোশাক ও সাজসজ্জার প্রতিযোগিতা।</div>
+            <br><small>সময়: দুপুর ২:০০</small>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-title">📻 শ্রুতি নাটক প্রতিযোগিতা</div>
+            <div class="comp-details">কণ্ঠস্বর ও অভিনয়ের চমৎকার মিশেলে শ্রুতি নাটক।</div>
+        </div>
+
+        <div class="comp-card">
+            <div class="comp-details">
+                <span class="category">প্রতিযোগিতায় নাম দেবার জন্য বইমেলা প্রাঙ্গন অফিসে অনুসন্ধান কেন্দ্রে যোগাযোগ করুন</span> 
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <a href="news.html" class="back-btn">← ফিরে যান</a>
+            
+            <button class="hidden-admin-link" onclick="checkCompPassword()">🔒 Admin Login</button>
+        </div>
+    </div>
+
+    <script>
+        function checkCompPassword() {
+            var password = prompt("পাসওয়ার্ড দিন:");
+            if (password === "1234") {
+                window.location.href = "competition_form.html";
+            } else if (password != null) {
+                alert("ভুল পাসওয়ার্ড!");
+            }
+        }
+    </script>
+
+</body>
+</html>

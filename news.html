@@ -5,27 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>এ বছরের মেলার খবর - বর্ধমান বইমেলা</title>
     <style>
-        /* আপনার আগের সব স্টাইল এখানে থাকবে */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #f0f2f5; color: #333; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; }
+        
         h1 { color: #1e90ff; border-bottom: 2px solid #1e90ff; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
         
-        /* নতুন মেনু বার স্টাইল */
+        /* মেনু বার স্টাইল */
         .nav-menu { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
         .nav-btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; color: white; background: #6c5ce7; transition: 0.3s; }
-        .nav-btn.admin { background: #2d3436; }
         .nav-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+
+        /* লুকানো মাস্টার বুকিং বাটন স্টাইল */
+        .master-trigger {
+            background: none;
+            border: none;
+            color: #bdc3c7; /* একদম হালকা ধূসর রঙ যাতে নজরে না পড়ে */
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: none;
+            opacity: 0.4;
+            transition: 0.3s;
+        }
+        .master-trigger:hover { opacity: 0.7; color: #7f8c8d; }
 
         .news-item { background: #e7f3ff; padding: 15px; border-left: 5px solid #1e90ff; margin-bottom: 20px; border-radius: 5px; }
         
-        /* অনুষ্ঠান সূচি বাটন স্টাইল */
         .btn-schedule { display: block; width: 100%; text-align: center; padding: 15px; background: #8e44ad; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px; font-size: 18px; }
 
         .booking-highlight { margin: 30px 0; padding: 25px; background: #fff5f5; border: 2px dashed #d32f2f; border-radius: 10px; text-align: center; }
         .btn-book-now { display: inline-block; margin-top: 15px; padding: 12px 35px; background: #d32f2f; color: white; text-decoration: none; border-radius: 25px; font-weight: bold; transition: 0.3s; }
+        
         .search-section { margin-top: 40px; padding: 25px; background: #f9f9f9; border-radius: 12px; border: 1px solid #ddd; text-align: center; }
         .btn-check-status { display: inline-block; margin-top: 15px; padding: 15px 40px; background: #1e90ff; color: white; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        
+        .btn-competition {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: #27ae60;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        .btn-competition:hover { background: #219150; transform: scale(1.02); }
+
+        footer { text-align: center; margin-top: 30px; padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -33,14 +63,13 @@
     <div class="container">
         <div class="nav-menu">
             <a href="index.html" class="nav-btn">🏠 হোম</a>
-            <a href="#" class="nav-btn admin" onclick="goToMasterBooking()">⚙️ Master Stall Booking</a>
         </div>
 
         <h1>📢 মেলার সর্বশেষ খবর ও আপডেট</h1>
         
         <div class="news-item">
             <h3>📅 মেলা শুরুর খবর</h3>
-            <p>আগামী ১০ই জানুয়ারি ২০২৬ থেকে বর্ধমান উৎসব ময়দানে মেলার শুভ উদ্বোধন হবে।</p>
+            <p>আগামী ২০ জানুয়ারি ২০২৬ থেকে বর্ধমান উৎসব ময়দানে মেলার শুভ উদ্বোধন হবে।</p>
         </div>
 
         <div class="news-item">
@@ -48,6 +77,7 @@
             <p>এ বছর ৫০০০-এর বেশি নতুন বইয়ের সমাহার থাকবে মেলা প্রাঙ্গণে।</p>
             
             <a href="Anusthan_suchi.html" class="btn-schedule">📅 বই মেলার অনুষ্ঠান সূচি (১০ দিন)</a>
+            <a href="competitions.html" class="btn-competition">🏆 বইমেলায় অনুষ্ঠিত বিভিন্ন প্রতিযোগিতা</a>
         </div>
 
         <div class="booking-highlight">
@@ -63,16 +93,25 @@
             <p style="margin: 10px 0; color: #555;">আপনার স্টল বুকিংয়ের বর্তমান অবস্থা এবং বকেয়া টাকার তথ্য জানতে নিচের বাটনে ক্লিক করুন।</p>
             <a href="status.html" class="btn-check-status">এখানে ক্লিক করে স্ট্যাটাস দেখুন</a>
         </div>
+
+        <div style="text-align: right; margin-top: 20px;">
+            <button class="master-trigger" onclick="goToMasterBooking()">🔒 Admin Login</button>
+        </div>
     </div>
 
+    <footer>
+        <p style="font-size: 12px; color: #999;">&copy; ২০২৬ বর্ধমান বইমেলা কমিটি</p>
+    </footer>
+
     <script>
-        // Master Stall Booking এর জন্য পাসওয়ার্ড প্রোটেকশন
+        // Master Stall Booking এর জন্য পাসওয়ার্ড প্রোটেকশন
         function goToMasterBooking() {
-            const pass = prompt("মাস্টার এডমিন পাসওয়ার্ড দিন:");
-            if (pass === "1234") { // আপনার পছন্দের পাসওয়ার্ড এখানে দিন
+            // পাসওয়ার্ড '1234' দেওয়া আছে, আপনি চাইলে পরিবর্তন করতে পারেন
+            const pass = prompt("মাস্টার এডমিন পাসওয়ার্ড দিন:");
+            if (pass === "1234") { 
                 window.location.href = "master_stallbooking.html";
-            } else {
-                alert("ভুল পাসওয়ার্ড! আপনি এই পেজে ঢোকার অনুমতি নেই।");
+            } else if (pass !== null) {
+                alert("ভুল পাসওয়ার্ড! আপনার প্রবেশের অনুমতি নেই।");
             }
         }
     </script>

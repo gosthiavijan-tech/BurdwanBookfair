@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রতিযোগিতা ডাটা এন্ট্রি - বর্ধমান বইমেলা</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #f4f7f6; padding: 20px; }
+        
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* হেডার ও লগ-আউট সেকশন */
+        .header-area { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            border-bottom: 2px solid #27ae60; 
+            padding-bottom: 15px; 
+        }
+        h2 { color: #2c3e50; margin: 0; }
+        
+        .btn-logout { 
+            background: #e74c3c; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .btn-logout:hover { background: #c0392b; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        
+        .quiz-card { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .btn-submit { background: #27ae60; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-size: 18px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-submit:hover { background: #219150; }
+        
+        .status-tag { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 5px 10px; border-radius: 4px; font-weight: bold; margin-top: 5px; }
+        .stats-container { margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        .stat-box { background: #2c3e50; color: white; padding: 10px; border-radius: 6px; text-align: center; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-area">
+        <h2>🏆 ডাটা এন্ট্রি প্যানেল</h2>
+        <button class="btn-logout" onclick="logout()">🚪 লগ-আউট</button>
+    </div>
+
+    <div class="form-group">
+        <label>বিভাগ নির্বাচন করুন:</label>
+        <select id="compCategory" onchange="renderForm()">
+            <option value="">--বিভাগ বেছে নিন--</option>
+            <option value="আবৃত্তি">আবৃত্তি</option>
+            <option value="বিতর্ক">বিতর্ক</option>
+            <option value="বক্তৃতা">বক্তৃতা</option>
+            <option value="কুইজ">কুইজ</option>
+            <option value="বসে আঁকা প্রতিযোগিতা">বসে আঁকা প্রতিযোগিতা</option>
+            <option value="যেমন খুশি সাজো">যেমন খুশি সাজো</option>
+            <option value="শ্রুতি নাটক">শ্রুতি নাটক</option>
+        </select>
+    </div>
+
+    <form id="entryForm">
+        <div id="dynamicFields"></div>
+        <input type="hidden" name="calculated_group" id="hiddenGroup">
+        <button type="button" id="submitBtn" class="btn-submit" onclick="submitData()" style="display: none;">জমা দিন (Submit)</button>
+    </form>
+
+    <div class="stats-container" id="statsDisplay"></div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSXv_FfLlhhlJnrxRPE4hFiXKx_vKsYGoi3EKJKkNlv3d5vtoYiz3KBwVAqVbUCgKn/exec"; 
+    let stats = JSON.parse(localStorage.getItem('boimela_stats')) || {};
+
+    // লগ-আউট ফাংশন
+    function logout() {
+        if(confirm("আপনি কি নিশ্চিতভাবে লগ-আউট করতে চান?")) {
+            // প্রতিযোগিতার মূল পাতায় পাঠিয়ে দেবে
+            window.location.href = "competitions.html"; 
+        }
+    }
+
+    function calcAge(dob) {
+        if(!dob) return "";
+        const today = new Date();
+        const birthDate = new Date(dob);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    function renderForm() {
+        const cat = document.getElementById('compCategory').value;
+        const fields = document.getElementById('dynamicFields');
+        const btn = document.getElementById('submitBtn');
+        fields.innerHTML = "";
+        btn.style.display = cat ? "block" : "none";
+
+        if (!cat) return;
+
+        let html = "";
+        
+        // ফর্ম নম্বর (কুইজ ও বসে আঁকোর জন্য)
+        if (cat === 'কুইজ' || cat === 'বসে আঁকা প্রতিযোগিতা') {
+            html += `<div class="form-group"><label>ফর্ম নম্বর (Manual No):</label><input type="text" name="manual_form_no" required></div>`;
+        }
+
+        html += `<div class="form-group"><label>ফোন নম্বর:</label><input type="tel" name="phone" required pattern="[0-9]{10}"></div>`;
+
+        if (cat === 'কুইজ') {
+            html += `<h4>মেম্বারদের তথ্য (২-৩ জন)</h4>`;
+            for(let i=1; i<=3; i++) {
+                html += `<div class="quiz-card">
+                    <label>মেম্বার ${i} ${i<3?'*':''}:</label>
+                    <input type="text" name="m${i}_name" placeholder="নাম" ${i<3?'required':''}>
+                    <input type="date" name="m${i}_dob" onchange="this.nextElementSibling.value = calcAge(this.value)" style="margin-top:5px">
+                    <input type="text" name="m${i}_age" placeholder="বয়স" readonly style="margin-top:5px; background:#eee">
+                    <input type="text" name="m${i}_school" placeholder="স্কুল" style="margin-top:5px">
+                    <select name="m${i}_class" style="margin-top:5px">${getClassList()}</select>
+                </div>`;
+            }
+            html += `<input type="hidden" name="group_id" value="GRP-${Math.random().toString(36).substr(2, 4).toUpperCase()}">`;
+        } else {
+            html += `<div class="form-group"><label>নাম:</label><input type="text" name="name" required></div>`;
+            html += `<div class="form-group"><label>জন্ম তারিখ:</label><input type="date" name="dob" onchange="updateAgeAndGroup(this.value)" required></div>`;
+            html += `<div class="form-group"><label>বয়স:</label><input type="text" name="age" id="dispAge" readonly style="background:#eee"> <div id="groupTag" class="status-tag"></div></div>`;
+            
+            if(['আবৃত্তি', 'বসে আঁকা প্রতিযোগিতা', 'যেমন খুশি সাজো', 'শ্রুতি নাটক'].includes(cat)) {
+                html += `<div class="form-group"><label>শ্রেণী:</label><select name="class">${getClassList()}</select></div>`;
+                html += `<div class="form-group"><label>স্কুল:</label><input type="text" name="school"></div>`;
+            }
+
+            if(cat === 'বিতর্ক') {
+                html += `<div class="form-group"><label>পক্ষ/বিপক্ষ:</label><select name="side"><option>পক্ষে</option><option>বিপক্ষে</option></select></div>`;
+            }
+        }
+        fields.innerHTML = html;
+        updateStatsView();
+    }
+
+    function getClassList() {
+        let opt = `<option value="">শ্রেণী বেছে নিন</option><option>KG</option>`;
+        for(let i=1; i<=12; i++) opt += `<option>Class ${i}</option>`;
+        return opt;
+    }
+
+    function updateAgeAndGroup(dob) {
+        const age = calcAge(dob);
+        document.getElementById('dispAge').value = age;
+        const cat = document.getElementById('compCategory').value;
+        const tag = document.getElementById('groupTag');
+        const hiddenGroup = document.getElementById('hiddenGroup');
+        let group = "";
+
+        if (cat === 'আবৃত্তি') {
+            group = (age <= 10) ? "ক (কেজি - ৪র্থ)" : "খ (৫ম - ১০ম)";
+        } else if (cat === 'বসে আঁকা প্রতিযোগিতা') {
+            if (age < 7) group = "ক";
+            else if (age < 13) group = "খ";
+            else group = "গ";
+        }
+        
+        tag.innerText = group ? "বিভাগ: " + group : "";
+        hiddenGroup.value = group;
+    }
+
+    function updateStatsView() {
+        const container = document.getElementById('statsDisplay');
+        container.innerHTML = "";
+        for (let key in stats) {
+            container.innerHTML += `<div class="stat-box"><strong>${key}</strong><br>${stats[key]} এন্ট্রি</div>`;
+        }
+    }
+
+    async function submitData() {
+        const btn = document.getElementById('submitBtn');
+        const cat = document.getElementById('compCategory').value;
+        
+        if(!confirm("আপনি কি ডাটা জমা দিতে চান?")) return;
+
+        btn.innerText = "শিটের সিরিয়াল চেক হচ্ছে...";
+        btn.disabled = true;
+
+        const formData = new URLSearchParams(new FormData(document.getElementById('entryForm')));
+        formData.append("category", cat);
+
+        try {
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+            const resultText = await res.text();
+            
+            if (!isNaN(resultText)) {
+                alert("সফলভাবে জমা হয়েছে! সিরিয়াল নম্বর: " + resultText);
+                stats[cat] = parseInt(resultText);
+                localStorage.setItem('boimela_stats', JSON.stringify(stats));
+                location.reload();
+            } else {
+                alert("সার্ভার ত্রুটি: " + resultText);
+                btn.disabled = false;
+                btn.innerText = "জমা দিন (Submit)";
+            }
+        } catch (e) {
+            alert("ইন্টারনেট কানেকশন চেক করুন!");
+            btn.disabled = false;
+            btn.innerText = "জমা দিন (Submit)";
+        }
+    }
+
+    window.onload = updateStatsView;
+</script>
+
+</body>
+</html>
