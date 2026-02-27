@@ -9,32 +9,18 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
         .header-box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .controls { display: flex; gap: 20px; align-items: center; }
+        .controls { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; white-space: nowrap; }
-        th { background: #007bff; color: white; position: sticky; top: 0; }
-        .scroll-container { overflow-x: auto; max-height: 500px; border: 1px solid #ddd; }
+        th { background: #007bff; color: white; position: sticky; top: 0; z-index: 10; }
+        .scroll-container { overflow-x: auto; max-height: 600px; border: 1px solid #ddd; }
         .btn-save { background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-weight: bold; }
         .btn-pdf { background: #dc3545; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         .status-Pending { background: #fff3cd; }
         .status-Approved { background: #d4edda; }
         .status-Reject { background: #f8d7da; }
-        select { padding: 4px; border-radius: 4px; }
-	.btn-logout { 
-            background: #2d3436; 
-            color: white; 
-            border: none; 
-            padding: 8px 15px; 
-            cursor: pointer; 
-            border-radius: 5px; 
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .btn-logout:hover { background: #000; }
+        select { padding: 6px; border-radius: 4px; border: 1px solid #ccc; }
+        .btn-logout { background: #2d3436; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px; font-weight: bold; text-decoration: none; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -42,21 +28,31 @@
 <div class="header-box">
     <h2>স্টল বুকিং মাস্টার প্যানেল</h2>
     <div class="controls">
-        <label>ফিল্টার করুন: </label>
-        <select id="statusFilter" onchange="renderTable()">
-            <option value="All">সব ডাটা (All Data)</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Reject">Reject</option>
-        </select>
+        <div>
+            <label>স্ট্যাটাস ফিল্টার: </label>
+            <select id="statusFilter" onchange="renderTable()">
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Reject">Reject</option>
+            </select>
+        </div>
+
+        <div>
+            <label>বইয়ের ধরন: </label>
+            <select id="categoryFilter" onchange="renderTable()">
+                <option value="All">All Categories</option>
+                <option value="NEW BOOK">NEW BOOK</option>
+                <option value="OLD BOOK">OLD BOOK</option>
+            </select>
+        </div>
+
         <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
-	<button class="btn-logout" onclick="logoutAdmin()">
-            🚪 লগ-আউট
-        </button>
+        <button class="btn-logout" onclick="logoutAdmin()">🚪 লগ-আউট</button>
     </div>
 </div>
 
-<div id="loading">ডাটা লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
+<div id="loading" style="text-align:center; padding: 20px;">ডাটা লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
 
 <div class="scroll-container">
     <table id="dataTable">
@@ -68,16 +64,15 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPOZqkgRYJ85NSkSN0lODTt2ODc6CAlOWqjAM_7zjl7acrPq7aJ_h2S2FoQPRhgphPlw/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhtbuArjBL3lCaXFBlABQL3Z_u_4VaNJjYZnyVsycSLeFDhSyKL-yLEngDPL28a51KRw/exec"; 
     let mainData = [];
-	 
-	function logoutAdmin() {
+
+    function logoutAdmin() {
         if(confirm("আপনি কি নিশ্চিতভাবে লগ-আউট করতে চান?")) {
-            // সেশন ক্লিয়ার করার মতো কোনো কাজ থাকলে এখানে করা যায়
-            window.location.href = "news.html"; // এটি ইউজারকে মেলার আপডেট পাতায় পাঠিয়ে দেবে
+            window.location.href = "news.html";
         }
     }
-    // ১. ডাটা লোড ফাংশন
+
     async function loadData() {
         try {
             const response = await fetch(SCRIPT_URL);
@@ -90,26 +85,32 @@
         }
     }
 
-    // ২. টেবিল রেন্ডার এবং ফিল্টার
     function renderTable() {
-        const filter = document.getElementById('statusFilter').value;
+        const sFilter = document.getElementById('statusFilter').value;
+        const cFilter = document.getElementById('categoryFilter').value;
         const head = document.getElementById('tableHead');
         const body = document.getElementById('tableBody');
         
-        const colNames = ["Action", "Date", "Form ID", "Stall Name", "Head Name", "Address", "Phone", "Rep. Name", "Spec", "Size", "Rate", "8x6", "6x6", "4x6", "Table", "Chair", "Light", "Plug", "Platform", "Mat", "Extra Total", "Valuation", "Insurance", "Grand Total", "Ad Type", "Ad Price", "Total Bill", "Advance", "Due", "Trx ID", "Trx Date", "Status"];
+        // কলামের নামসমূহ (শিটের নতুন সিরিয়াল অনুযায়ী)
+        const colNames = ["Action", "Date", "Form ID", "Stall Name", "Head Name", "Address", "Phone", "Rep. Name", "Spec", "Book Category", "Size", "Rate", "8x6", "6x6", "4x6", "Table", "Chair", "Light", "Plug", "Platform", "Mat", "Extra Total", "Valuation", "Insurance", "Grand Total", "Ad Type", "Ad Price", "Total Bill", "Advance", "Due", "Trx ID", "Trx Date", "Status"];
         
         head.innerHTML = colNames.map(name => `<th>${name}</th>`).join('');
         body.innerHTML = "";
 
-        // ডাটা ফিল্টার করা (Index 30 হলো Status কলাম)
-        const displayData = mainData.slice(1).filter(row => filter === "All" || (row[30] && row[30].toString() === filter));
+        // ডাটা ফিল্টার লজিক
+        // Index 8 হলো book_category, Index 31 হলো booking_status
+        const displayData = mainData.slice(1).filter(row => {
+            const matchStatus = (sFilter === "All" || (row[31] && row[31].toString() === sFilter));
+            const matchCategory = (cFilter === "All" || (row[8] && row[8].toString() === cFilter));
+            return matchStatus && matchCategory;
+        });
 
         displayData.forEach(row => {
             let tr = document.createElement('tr');
             let cells = `<td><button class="btn-save" onclick="saveStatus('${row[1]}', this)">Save</button></td>`;
             
             row.forEach((val, index) => {
-                if(index === 30) { // Status Column logic
+                if(index === 31) { // Status Column (শিটের শেষ কলাম)
                     cells += `<td>
                         <select class="status-${val}" onchange="this.className='status-'+this.value">
                             <option value="Pending" ${val==='Pending'?'selected':''}>Pending</option>
@@ -126,7 +127,6 @@
         });
     }
 
-    // ৩. স্ট্যাটাস সেভ ফাংশন (Modified with master_update action)
     async function saveStatus(id, btn) {
         const select = btn.closest('tr').querySelector('select');
         const status = select.value;
@@ -135,9 +135,8 @@
         btn.innerText = "Wait...";
         btn.disabled = true;
 
-        // Apps Script এ পাঠানোর জন্য ডাটা তৈরি
         const formData = new URLSearchParams();
-        formData.append('action', 'master_update'); // আপনার Apps Script লজিকের জন্য
+        formData.append('action', 'master_update');
         formData.append('form_id', id);
         formData.append('booking_status', status);
 
@@ -150,32 +149,38 @@
             
             const result = await res.text();
             if (result.includes("Success")) {
-                alert("সফলভাবে আপডেট হয়েছে!");
+                alert("সফলভাবে স্ট্যাটাস আপডেট হয়েছে!");
+                // লোকাল ডাটা আপডেট যাতে রিফ্রেশ না লাগে
+                mainData.forEach(r => { if(r[1] == id) r[31] = status; });
             } else {
-                alert("সার্ভার রেসপন্স: " + result);
+                alert("ত্রুটি: " + result);
             }
         } catch (err) {
-            console.error(err);
-            alert("সেভ হয়নি! ইন্টারনেট কানেকশন বা স্ক্রিপ্ট পারমিশন চেক করুন।");
+            alert("সেভ হয়নি! কানেকশন চেক করুন।");
         } finally {
             btn.innerText = originalText;
             btn.disabled = false;
         }
     }
 
-    // ৪. PDF ডাউনলোড ফাংশন
     function downloadPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('l', 'mm', 'a4');
-        const filter = document.getElementById('statusFilter').value;
+        const sF = document.getElementById('statusFilter').value;
+        const cF = document.getElementById('categoryFilter').value;
 
-        doc.text("Stall Booking Report (" + filter + ")", 14, 15);
+        doc.setFontSize(14);
+        doc.text(`Booking Report (Status: ${sF}, Category: ${cF})`, 14, 15);
 
-        const currentRows = mainData.slice(1).filter(row => filter === "All" || (row[30] && row[30].toString() === filter));
+        const currentRows = mainData.slice(1).filter(row => {
+            const matchStatus = (sF === "All" || (row[31] && row[31].toString() === sF));
+            const matchCategory = (cF === "All" || (row[8] && row[8].toString() === cF));
+            return matchStatus && matchCategory;
+        });
         
-        // নির্দিষ্ট কলাম ম্যাপিং
-        const pdfData = currentRows.map(r => [r[1], r[2], r[3], r[5], r[26], r[28], r[29]]);
-        const pdfHeaders = [["Form ID", "Stall Name", "Head Name", "Phone", "Advance", "Trx ID", "Trx Date"]];
+        // PDF এর জন্য গুরুত্বপূর্ণ কলাম বাছাই: Form ID(1), Stall Name(2), Category(8), Phone(5), Advance(27), Trx ID(29), Status(31)
+        const pdfData = currentRows.map(r => [r[1], r[2], r[8], r[5], r[27], r[29], r[31]]);
+        const pdfHeaders = [["Form ID", "Stall Name", "Category", "Phone", "Advance", "Trx ID", "Status"]];
 
         doc.autoTable({
             startY: 25,
@@ -186,7 +191,7 @@
             headStyles: { fillColor: [0, 123, 255] }
         });
 
-        doc.save(`Booking_Report_${filter}.pdf`);
+        doc.save(`Report_${sF}_${cF}.pdf`);
     }
 
     window.onload = loadData;

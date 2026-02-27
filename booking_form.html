@@ -2,30 +2,130 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>৪৯ তম বর্ধমান বইমেলা স্টল বুকিং</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; margin: 0; padding: 40px 10px; display: flex; justify-content: center; }
-        .main-card { width: 100%; max-width: 850px; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-top: 8px solid #1a73e8; }
-        .header-section { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
-        .header-section h1 { color: #d32f2f; margin: 0; font-size: 32px; }
-        .header-section h2 { color: #1a73e8; margin: 5px 0; font-size: 22px; }
-        .header-section p { font-weight: bold; color: #555; margin: 5px 0; }
-        h3 { background-color: #e8f0fe; color: #1a73e8; padding: 12px 15px; border-radius: 6px; font-size: 18px; margin-top: 35px; margin-bottom: 20px; border-left: 5px solid #1a73e8; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #444; font-size: 14px; }
-        input[type="text"], input[type="tel"], input[type="number"], input[type="date"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .price-box { background: #fff8e1; border: 2px dashed #ff8f00; padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px; font-weight: bold; }
-        .grand-total-section { background: #1a73e8; color: white; padding: 25px; border-radius: 10px; margin-top: 30px; text-align: center; box-shadow: 0 4px 15px rgba(26,115,232,0.4); }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; border: 1px solid #ddd; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        th { background: #f8f9fa; }
-        .submit-btn { width: 100%; background-color: #27ae60; color: white; padding: 18px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.3s; }
-        .submit-btn:hover { background-color: #219150; }
-        #successModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 450px; width: 90%; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Arial', 'SolaimanLipi', sans-serif; 
+            background-color: #f0f2f5; 
+            margin: 0; 
+            padding: 20px 10px; 
+            display: flex; 
+            justify-content: center; 
+        }
+
+        .main-card { 
+            width: 100%; 
+            max-width: 850px; 
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            border-top: 8px solid #1a73e8; 
+        }
+
+        /* Header Responsive */
+        .header-section { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+        .header-section h1 { color: #d32f2f; margin: 0; font-size: clamp(22px, 5vw, 32px); }
+        .header-section h2 { color: #1a73e8; margin: 5px 0; font-size: clamp(16px, 4vw, 22px); }
+        .header-section p { font-weight: bold; color: #555; margin: 5px 0; font-size: 14px; }
+
+        h3 { 
+            background-color: #e8f0fe; 
+            color: #1a73e8; 
+            padding: 10px 15px; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            margin-top: 30px; 
+            margin-bottom: 15px; 
+            border-left: 5px solid #1a73e8; 
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; color: #444; font-size: 13px; }
+        
+        input[type="text"], input[type="tel"], input[type="number"], 
+        input[type="date"], select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            font-size: 15px; 
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input:focus { border-color: #1a73e8; }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 15px; 
+        }
+
+        .table-container { 
+            overflow-x: auto; 
+            margin-top: 10px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        table { width: 100%; border-collapse: collapse; background: white; min-width: 500px; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size: 13px; }
+        th { background: #f8f9fa; color: #333; }
+
+        .price-box { 
+            background: #fff8e1; 
+            border: 2px dashed #ff8f00; 
+            padding: 12px; 
+            border-radius: 8px; 
+            text-align: center; 
+            margin-top: 10px; 
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .grand-total-section { 
+            background: #1a73e8; 
+            color: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-top: 25px; 
+            text-align: center; 
+            box-shadow: 0 4px 12px rgba(26,115,232,0.3); 
+        }
+
+        .submit-btn { 
+            width: 100%; 
+            background-color: #27ae60; 
+            color: white; 
+            padding: 16px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: 0.3s; 
+        }
+
+        #successModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; text-align: center; max-width: 400px; width: 100%; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px 5px; }
+            .main-card { padding: 15px; border-radius: 8px; }
+            .grid { grid-template-columns: 1fr; }
+            .submit-btn { font-size: 16px; }
+            .grand-total-section span[style*="32px"] { font-size: 26px !important; }
+        }
+
+        .uppercase-field {
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -53,30 +153,31 @@
 
         <div class="form-group">
             <label>আবেদনের তারিখ</label>
-            <input type="date" id="application_date" name="application_date" readonly style="background: #eee;">
+            <input type="date" id="application_date" name="application_date" readonly style="background: #f5f5f5; color: #666;">
         </div>
 
         <h3>১. প্রতিষ্ঠানের সাধারণ তথ্য</h3>
         <div class="form-group">
             <label>স্টলের নাম (STALL NAME) *</label>
-            <input type="text" name="stall_name" required>
+            <input type="text" id="stall_name" name="stall_name" class="uppercase-field" oninput="this.value = this.value.toUpperCase()" placeholder="আপনার স্টলের নাম লিখুন" required>
         </div>
         <div class="form-group">
             <label>NAME OF HEAD OF THE ORGANIZATION *</label>
-            <input type="text" name="head_name" required>
+            <input type="text" id="head_name" name="head_name" class="uppercase-field" oninput="this.value = this.value.toUpperCase()" placeholder="প্রধান ব্যক্তির নাম" required>
         </div>
         <div class="form-group">
             <label>ঠিকানা (Address) *</label>
-            <textarea name="address" rows="2" required></textarea>
+            <textarea id="address" name="address" class="uppercase-field" oninput="this.value = this.value.toUpperCase()" placeholder="পূর্ণ ঠিকানা লিখুন" rows="2" required></textarea>
         </div>
         <div class="grid">
             <div class="form-group">
                 <label>Proprietor Phone Number *</label>
-                <input type="tel" name="proprietor_phone" required>
+                <input type="tel" id="phone_input" name="proprietor_phone" placeholder="১০ ডিজিটের নম্বর দিন" maxlength="10" required>
+                <span id="phone_error" style="color: #d32f2f; font-size: 12px; display: none; margin-top: 5px;">⚠ সঠিক মোবাইল নম্বর দিন।</span>
             </div>
             <div class="form-group">
                 <label>Represent Stall Holder Name</label>
-                <input type="text" name="represent_name">
+                <input type="text" id="represent_name" name="represent_name" class="uppercase-field" oninput="this.value = this.value.toUpperCase()" placeholder="প্রতিনিধির নাম">
             </div>
         </div>
 
@@ -95,6 +196,16 @@
                     <option value="ART GALLERY" data-price="17500">ART GALLERY</option>
                 </select>
             </div>
+            
+            <div class="form-group" id="book_type_container" style="display: none;">
+                <label>বইয়ের ধরন (BOOK TYPE) *</label>
+                <select name="book_category" id="book_category">
+                    <option value="">সিলেক্ট করুন</option>
+                    <option value="NEW BOOK">নতুন বই (NEW BOOK)</option>
+                    <option value="OLD BOOK">পুরানো বই (OLD BOOK)</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>AREA OF STALL / QUANTITY</label>
                 <select name="area_size" id="stall_area" onchange="calculateEverything()"></select>
@@ -106,33 +217,33 @@
         </div>
 
         <h3>৩. অতিরিক্ত চাহিদা (Extra Requirement)</h3>
-        <div style="overflow-x:auto;">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>Item</th>
-                        <th>Qty</th>
-                        <th>Rate</th>
+                        <th style="width: 80px;">Qty</th>
+                        <th>Rate (10 Days)</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody id="extra_items_body">
-                    <tr><td>EXTRA RACK (8'x6')</td><td><input type="number" name="extra_rack_8x6" class="extra-qty" data-rate="1440" value="0" min="0" oninput="calculateEverything()"></td><td>1440/10days</td><td class="item-total">0.00</td></tr>
-                    <tr><td>EXTRA RACK (6'x6')</td><td><input type="number" name="extra_rack_6x6" class="extra-qty" data-rate="1080" value="0" min="0" oninput="calculateEverything()"></td><td>1080/10days</td><td class="item-total">0.00</td></tr>
-                    <tr><td>EXTRA RACK (4'x6')</td><td><input type="number" name="extra_rack_4x6" class="extra-qty" data-rate="720" value="0" min="0" oninput="calculateEverything()"></td><td>720/10days</td><td class="item-total">0.00</td></tr>
-                    <tr><td>Extra Table</td><td><input type="number" name="extra_table" class="extra-qty" data-rate="300" value="0" min="0" oninput="calculateEverything()"></td><td>300/10days</td><td class="item-total">0.00</td></tr>
-                    <tr><td>Extra Chair (Daily)</td><td><input type="number" name="extra_chair" class="extra-qty" data-rate="15" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>150/10days</td><td class="item-total">0.00</td></tr>
-                    <tr><td>Extra Light (Daily)</td><td><input type="number" name="extra_light" class="extra-qty" data-rate="30" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>300/10days</td><td class="item-total">0.00</td></tr>
-                    <tr><td>Plug Point (Daily)</td><td><input type="number" name="extra_plug" class="extra-qty" data-rate="25" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>250/10days</td><td class="item-total">0.00</td></tr>
+                    <tr><td>EXTRA RACK (8'x6')</td><td><input type="number" name="extra_rack_8x6" class="extra-qty" data-rate="1440" value="0" min="0" oninput="calculateEverything()"></td><td>1440/-</td><td class="item-total">0.00</td></tr>
+                    <tr><td>EXTRA RACK (6'x6')</td><td><input type="number" name="extra_rack_6x6" class="extra-qty" data-rate="1080" value="0" min="0" oninput="calculateEverything()"></td><td>1080/-</td><td class="item-total">0.00</td></tr>
+                    <tr><td>EXTRA RACK (4'x6')</td><td><input type="number" name="extra_rack_4x6" class="extra-qty" data-rate="720" value="0" min="0" oninput="calculateEverything()"></td><td>720/-</td><td class="item-total">0.00</td></tr>
+                    <tr><td>Extra Table</td><td><input type="number" name="extra_table" class="extra-qty" data-rate="300" value="0" min="0" oninput="calculateEverything()"></td><td>300/-</td><td class="item-total">0.00</td></tr>
+                    <tr><td>Extra Chair (Daily)</td><td><input type="number" name="extra_chair" class="extra-qty" data-rate="15" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>150/-</td><td class="item-total">0.00</td></tr>
+                    <tr><td>Extra Light (Daily)</td><td><input type="number" name="extra_light" class="extra-qty" data-rate="30" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>300/-</td><td class="item-total">0.00</td></tr>
+                    <tr><td>Plug Point (Daily)</td><td><input type="number" name="extra_plug" class="extra-qty" data-rate="25" data-type="daily" value="0" min="0" oninput="calculateEverything()"></td><td>250/-</td><td class="item-total">0.00</td></tr>
                     <tr>
                         <td>Platform (Per 100sqft)</td>
                         <td><select name="extra_platform" class="extra-qty area-based" data-rate="3000" onchange="calculateEverything()"><option value="No">No</option><option value="Yes">Yes</option></select></td>
-                        <td>3000/10days</td><td class="item-total">0.00</td>
+                        <td>3000/-</td><td class="item-total">0.00</td>
                     </tr>
                     <tr>
                         <td>Mat (Per 100sqft)</td>
                         <td><select name="extra_mat" class="extra-qty area-based" data-rate="1500" onchange="calculateEverything()"><option value="No">No</option><option value="Yes">Yes</option></select></td>
-                        <td>1500/10days</td><td class="item-total">0.00</td>
+                        <td>1500/-</td><td class="item-total">0.00</td>
                     </tr>
                 </tbody>
             </table>
@@ -143,7 +254,7 @@
 
         <h3>৪. বিমা (Insurance)</h3>
         <div class="form-group">
-            <label>Total valuation of stock at the fair * (৫০০০ এর গুণিতকে বাড়বে)</label>
+            <label>Total valuation of stock (৫০০০ এর গুণিতকে)</label>
             <input type="number" id="valuation" name="valuation" value="0" min="0" step="5000" oninput="calculateEverything()">
         </div>
         <div class="price-box" id="ins_res_box" style="display:none; background: #f1f8e9; border-color: #4caf50;">
@@ -152,75 +263,109 @@
         </div>
 
         <div class="grand-total-section">
-            <span style="font-size: 18px;">মোট বিল:</span><br>
+            <span style="font-size: 16px;">মোট সর্বমোট বিল:</span><br>
             <span style="font-size: 32px; font-weight: 900;">₹ <span id="grand_total_display">0.00</span></span>
         </div>
 
-        <button type="submit" id="submitBtn" class="submit-btn">জমা দিন</button>
+        <button type="submit" id="submitBtn" class="submit-btn">জমা দিন (Submit)</button>
     </form>
 </div>
 
 <div id="successModal">
     <div class="modal-content">
         <div style="color: #27ae60; font-size: 50px;">✔</div>
-        <h2>সফলভাবে জমা হয়েছে!</h2>
+        <h2 style="font-size: 20px;">সফলভাবে জমা হয়েছে!</h2>
         <p>আপনার বুকিং আইডি:</p>
-        <div id="display_form_id" style="font-size: 24px; font-weight: bold; color: #1a73e8; background: #e8f0fe; padding: 10px; border-radius: 8px; margin: 15px 0;"></div>
-        <button type="button" onclick="goToAdPage()" class="submit-btn" style="background: #f39c12;">এগিয়ে যান (Next)</button>
+        <div id="display_form_id" style="font-size: 22px; font-weight: bold; color: #1a73e8; background: #e8f0fe; padding: 10px; border-radius: 8px; margin: 15px 0;"></div>
+        <button type="button" onclick="goToAdPage()" class="submit-btn" style="background: #f39c12; padding: 12px; font-size: 16px;">পরবর্তী ধাপে যান (Next)</button>
     </div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzPOZqkgRYJ85NSkSN0lODTt2ODc6CAlOWqjAM_7zjl7acrPq7aJ_h2S2FoQPRhgphPlw/exec'; 
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzhtbuArjBL3lCaXFBlABQL3Z_u_4VaNJjYZnyVsycSLeFDhSyKL-yLEngDPL28a51KRw/exec'; 
+    
     const areaOptions = {
         "Stall": [
-            { text: "(10'X10')", value: 100 }, { text: "(05'X10')", value: 50 }, { text: "(10'X15')", value: 150 }, { text: "(15'X10')", value: 150 }, { text: "(15'X15')", value: 225 }, { text: "(15'X20')", value: 300 }, { text: "(20'X10')", value: 200 }, { text: "(20'X15')", value: 300 }, { text: "(20'X20')", value: 400 }, { text: "(25'X10')", value: 250 }, { text: "(30'X10')", value: 300 }, { text: "(30'X12')", value: 360 }, { text: "(30'X15')", value: 450 }, { text: "(30'X20')", value: 600 }, { text: "(40'X10')", value: 400 }, { text: "(40'X15')", value: 600 }
-        ],
-        "Table": [{ text: "১টি টেবিল", value: 100 }, { text: "২টি টেবিল", value: 200 }],
-        "Fixed": [{ text: "নির্দিষ্ট মাপ", value: 100 }]
+            { text: "(10'X10')", value: 100 }, { text: "(05'X10')", value: 50 }, { text: "(10'X15')", value: 150 }, 
+            { text: "(15'X10')", value: 150 }, { text: "(15'X15')", value: 225 }, { text: "(15'X20')", value: 300 }, 
+            { text: "(20'X10')", value: 200 }, { text: "(20'X15')", value: 300 }, { text: "(20'X20')", value: 400 }, 
+            { text: "(25'X10')", value: 250 }, { text: "(30'X10')", value: 300 }, { text: "(30'X12')", value: 360 }, 
+            { text: "(30'X15')", value: 450 }, { text: "(30'X20')", value: 600 }, { text: "(40'X10')", value: 400 }, 
+            { text: "(40'X15')", value: 600 }
+        ]
     };
 
     function updateAreaOptions() {
         const spec = document.getElementById('stall_spec').value;
         const areaSelect = document.getElementById('stall_area');
         const valuationInput = document.getElementById('valuation');
+        const bookTypeContainer = document.getElementById('book_type_container');
+        const bookCategory = document.getElementById('book_category');
         
         areaSelect.innerHTML = "";
         if(!spec) return;
 
-        // বিমার মিনিমাম লজিক
-        if(spec === "Book Stall") {
+        // বিমা এবং বুক টাইপ লজিক
+        if (spec === "Book Stall") {
+            valuationInput.value = 10000;
             valuationInput.min = 10000;
-            if(parseFloat(valuationInput.value) < 10000) valuationInput.value = 10000;
-        } else if(spec === "Pavilion") {
+            bookTypeContainer.style.display = 'block';
+            bookCategory.required = true;
+        } 
+        else if (spec === "Pavilion") {
+            valuationInput.value = 100000;
             valuationInput.min = 100000;
-            if(parseFloat(valuationInput.value) < 100000) valuationInput.value = 100000;
-        } else {
+            bookTypeContainer.style.display = 'none';
+            bookCategory.required = false;
+            bookCategory.value = "";
+        } 
+        else {
+            valuationInput.value = 0;
             valuationInput.min = 0;
+            bookTypeContainer.style.display = 'none';
+            bookCategory.required = false;
+            bookCategory.value = "";
         }
 
-        let list = (spec.includes("Stall") || spec === "Other Then Book") ? areaOptions.Stall : 
-                   (spec.includes("Table")) ? areaOptions.Table : areaOptions.Fixed;
-        
-        list.forEach(opt => {
-            let el = document.createElement("option"); el.text = opt.text; el.value = opt.value;
-            areaSelect.add(el);
-        });
+        // এরিয়া ড্রপডাউন লোড
+        if(spec === "Book Stall" || spec === "Other Then Book") {
+            areaOptions.Stall.forEach(opt => {
+                let el = document.createElement("option");
+                el.text = opt.text; el.value = opt.value;
+                areaSelect.add(el);
+            });
+        } else {
+            for(let i = 1; i <= 3; i++) {
+                let el = document.createElement("option");
+                el.text = i + (spec.includes("Table") ? " টি টেবিল" : " টি ইউনিট");
+                el.value = i;
+                areaSelect.add(el);
+            }
+        }
         calculateEverything();
     }
 
     function calculateEverything() {
-        const spec = document.getElementById('stall_spec');
+        const specSelect = document.getElementById('stall_spec');
+        const selectedSpec = specSelect.value;
         const areaVal = parseFloat(document.getElementById('stall_area').value) || 0;
-        const baseRate = parseFloat(spec.options[spec.selectedIndex].getAttribute('data-price')) || 0;
+        const baseRate = parseFloat(specSelect.options[specSelect.selectedIndex].getAttribute('data-price')) || 0;
         const valuationInput = document.getElementById('valuation');
 
-        // ১. স্টল রেট ক্যালকুলেশন
-        const stallTotal = (baseRate / 100) * areaVal;
+        // স্টক ভ্যালু সুরক্ষা (মিনিমাম চেক)
+        let val = parseFloat(valuationInput.value) || 0;
+        if (selectedSpec === "Book Stall" && val < 10000) {
+            val = 10000; valuationInput.value = 10000;
+        } else if (selectedSpec === "Pavilion" && val < 100000) {
+            val = 100000; valuationInput.value = 100000;
+        }
+
+        let stallTotal = (selectedSpec === "Book Stall" || selectedSpec === "Other Then Book") 
+                         ? (baseRate / 100) * areaVal : baseRate * areaVal;
+
         document.getElementById('display_stall_price').innerText = stallTotal.toFixed(2);
         document.getElementById('hidden_stall_rate').value = stallTotal.toFixed(2);
 
-        // ২. অতিরিক্ত খরচ ক্যালকুলেশন
         let extraTotal = 0;
         document.querySelectorAll('#extra_items_body tr').forEach(row => {
             const input = row.querySelector('.extra-qty');
@@ -228,7 +373,10 @@
                 const rate = parseFloat(input.getAttribute('data-rate'));
                 let rowAmt = 0;
                 if (input.classList.contains('area-based')) {
-                    if (input.value === "Yes") rowAmt = (rate / 100) * areaVal;
+                    if (input.value === "Yes") {
+                        rowAmt = (selectedSpec === "Book Stall" || selectedSpec === "Other Then Book") 
+                                 ? (rate / 100) * areaVal : rate * areaVal;
+                    }
                 } else {
                     let qty = parseFloat(input.value) || 0;
                     rowAmt = (input.getAttribute('data-type') === 'daily') ? (rate * 10) * qty : rate * qty;
@@ -240,22 +388,11 @@
         document.getElementById('display_extra_total').innerText = extraTotal.toFixed(2);
         document.getElementById('hidden_total_extra').value = extraTotal.toFixed(2);
 
-        // ৩. বিমা ক্যালকুলেশন (১০০০ এ ৩ টাকা)
-        let val = parseFloat(valuationInput.value) || 0;
-        
-        // এনফোর্স মিনিমাম ভ্যালু অন ইনপুট
-        const currentMin = parseFloat(valuationInput.min) || 0;
-        if(val < currentMin) {
-            val = currentMin;
-            valuationInput.value = currentMin;
-        }
-
         const insCharge = (val / 1000) * 3;
         document.getElementById('ins_res_box').style.display = val > 0 ? 'block' : 'none';
         document.getElementById('display_insurance_charge').innerText = insCharge.toFixed(2);
         document.getElementById('hidden_insurance_amount').value = insCharge.toFixed(2);
 
-        // ৪. গ্র্যান্ড টোটাল
         const finalTotal = stallTotal + extraTotal + insCharge;
         document.getElementById('grand_total_display').innerText = finalTotal.toFixed(2);
         document.getElementById('hidden_grand_total').value = finalTotal.toFixed(2);
@@ -270,7 +407,7 @@
         document.getElementById('hidden_form_id').value = formID;
         document.getElementById('hidden_trx_date').value = new Date().toLocaleDateString();
 
-        btn.disabled = true; btn.innerText = "জমা হচ্ছে...";
+        btn.disabled = true; btn.innerText = "অপেক্ষা করুন...";
 
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new FormData(form)})
         .then(() => {
@@ -279,15 +416,35 @@
             document.getElementById('display_form_id').innerText = formID;
             document.getElementById('successModal').style.display = 'flex';
         })
-        .catch(() => { alert("ত্রুটি হয়েছে!"); btn.disabled = false; });
+        .catch((error) => { 
+            console.error('Error!', error.message);
+            alert("ত্রুটি হয়েছে!"); 
+            btn.disabled = false; btn.innerText = "জমা দিন (Submit)";
+        });
     });
 
-    function goToAdPage() {
-        window.location.href = "add.html"; 
-    }
+    function goToAdPage() { window.location.href = "add.html"; }
+
+    document.getElementById('phone_input').addEventListener('blur', function() {
+        const phone = this.value;
+        const errorMsg = document.getElementById('phone_error');
+        const phonePattern = /^[5-9][0-9]{9}$/;
+        if (phone !== "" && !phonePattern.test(phone)) {
+            errorMsg.style.display = 'block';
+            this.style.borderColor = '#d32f2f';
+            alert("সঠিক মোবাইল নম্বর দিন।");
+        } else {
+            errorMsg.style.display = 'none';
+            this.style.borderColor = '#ccc';
+        }
+    });
+
+    document.getElementById('phone_input').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
 
     window.onload = () => { 
-        document.getElementById('application_date').valueAsDate = new Date(); 
+        document.getElementById('application_date').value = new Date().toISOString().split('T')[0];
         updateAreaOptions(); 
     };
 </script>
