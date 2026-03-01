@@ -198,7 +198,7 @@
             </div>
             
             <div class="form-group" id="book_type_container" style="display: none;">
-                <label>বইয়ের ধরন (BOOK TYPE) *</label>
+                <label>বইয়ের ধরন (BOOK TYPE) *</label>
                 <select name="book_category" id="book_category">
                     <option value="">সিলেক্ট করুন</option>
                     <option value="NEW BOOK">নতুন বই (NEW BOOK)</option>
@@ -305,7 +305,6 @@
         areaSelect.innerHTML = "";
         if(!spec) return;
 
-        // বিমা এবং বুক টাইপ লজিক
         if (spec === "Book Stall") {
             valuationInput.value = 10000;
             valuationInput.min = 10000;
@@ -327,7 +326,6 @@
             bookCategory.value = "";
         }
 
-        // এরিয়া ড্রপডাউন লোড
         if(spec === "Book Stall" || spec === "Other Then Book") {
             areaOptions.Stall.forEach(opt => {
                 let el = document.createElement("option");
@@ -352,7 +350,6 @@
         const baseRate = parseFloat(specSelect.options[specSelect.selectedIndex].getAttribute('data-price')) || 0;
         const valuationInput = document.getElementById('valuation');
 
-        // স্টক ভ্যালু সুরক্ষা (মিনিমাম চেক)
         let val = parseFloat(valuationInput.value) || 0;
         if (selectedSpec === "Book Stall" && val < 10000) {
             val = 10000; valuationInput.value = 10000;
@@ -407,9 +404,19 @@
         document.getElementById('hidden_form_id').value = formID;
         document.getElementById('hidden_trx_date').value = new Date().toLocaleDateString();
 
+        // --- নতুন লজিক: Area Text + Value একসাথে পাঠানো ---
+        const areaSelect = document.getElementById('stall_area');
+        const selectedAreaText = areaSelect.options[areaSelect.selectedIndex].text;
+        const selectedAreaValue = areaSelect.value;
+        
+        const formData = new FormData(form);
+        // area_size ফিল্ডটি ওভাররাইট করছি
+        formData.set('area_size', selectedAreaText + " - " + selectedAreaValue);
+        // ---------------------------------------------
+
         btn.disabled = true; btn.innerText = "অপেক্ষা করুন...";
 
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new FormData(form)})
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: formData})
         .then(() => {
             localStorage.setItem('my_booking_id', formID);
             localStorage.setItem('last_bill_amount', document.getElementById('hidden_grand_total').value);

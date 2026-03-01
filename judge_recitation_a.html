@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <style>
+        body { font-family: 'Segoe UI', Arial; background: #f4f7f6; padding: 15px; }
+        .container { max-width: 600px; margin: auto; }
+        .setup-box { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: none; border-left: 5px solid #27ae60; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        select, input { padding: 10px; border-radius: 5px; border: 1px solid #ddd; width: 100%; margin: 5px 0; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn { background: #27ae60; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn:disabled { background: #ccc; }
+        .judge-label { background: #e67e22; color: white; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="setup-box" id="setup">
+        <h3>আপনার পরিচয় নির্বাচন করুন</h3>
+        <select id="judgeSelect">
+            <option value="">-- বিচারক নির্বাচন করুন --</option>
+            <option value="1" id="opt1">১ম বিচারক</option>
+            <option value="2" id="opt2">২য় বিচারক</option>
+            <option value="3" id="opt3">৩য় বিচারক</option>
+        </select>
+        <button class="btn" onclick="startJudging()" style="margin-top:10px">শুরু করুন</button>
+    </div>
+
+    <div id="judgingArea" style="display:none;">
+        <div class="judge-label" id="currentJudgeDisplay"></div>
+        <div id="competitorList">লোড হচ্ছে...</div>
+    </div>
+</div>
+
+<script>
+    let currentJudge = null;
+
+    // লোড হওয়ার সময় চেক করা কোন বিচারক অলরেডি সিলেক্টেড
+    window.onload = () => {
+        google.script.run.withSuccessHandler(status => {
+            if(status.j1) document.getElementById('opt1').disabled = true;
+            if(status.j2) document.getElementById('opt2').disabled = true;
+            if(status.j3) document.getElementById('opt3').disabled = true;
+        }).getSelectedJudges();
+    };
+
+    function startJudging() {
+        currentJudge = document.getElementById('judgeSelect').value;
+        if(!currentJudge) return alert("দয়া করে বিচারক নির্বাচন করুন");
+
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('judgingArea').style.display = 'block';
+        document.getElementById('currentJudgeDisplay').innerText = currentJudge + " নম্বর বিচারক হিসেবে কাজ করছেন";
+        
+        // সার্ভারে লক করে দেওয়া
+        google.script.run.setJudgeBusy(currentJudge);
+        
+        // ডেটা আনা
+        google.script.run.withSuccessHandler(render).getCompetitorsA();
+    }
+
+    function render(data) {
+        let listDiv = document.getElementById('competitorList');
+        listDiv.innerHTML = '';
+        data.forEach(p => {
+            listDiv.innerHTML += `
+                <div class="card" style="display:block;">
+                    <strong>${p.name}</strong> (রোল: ${p.serial})
+                    <div class="grid">
+                        <input type="number" id="u_${p.serial}" placeholder="উচ্চারণ">
+                        <input type="number" id="k_${p.serial}" placeholder="কণ্ঠ">
+                        <input type="number" id="p_${p.serial}" placeholder="প্রকাশ">
+                        <input type="number" id="o_${p.serial}" placeholder="অন্যান্য">
+                    </div>
+                    <button class="btn" style="margin-top:10px; background:#2980b9" onclick="save(${p.serial})">সেভ</button>
+                </div>`;
+        });
+    }
+
+    function save(serial) {
+        let scores = [
+            document.getElementById('u_'+serial).value || 0,
+            document.getElementById('k_'+serial).value || 0,
+            document.getElementById('p_'+serial).value || 0,
+            document.getElementById('o_'+serial).value || 0
+        ];
+        google.script.run.withSuccessHandler(() => alert("ডেটা সংরক্ষিত!")).saveJudgeScore(serial, currentJudge, scores);
+    }
+</script>
+</body>
+</html>

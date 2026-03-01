@@ -98,8 +98,8 @@
 
         <div style="display: flex; justify-content: space-between; align-items: flex-end;">
             <a href="news.html" class="back-btn">← ফিরে যান</a>
-            
-            <button class="hidden-admin-link" onclick="checkCompPassword()">🔒 Admin Login</button>
+	    <button class="hidden-admin-link" onclick="checkCompPassword()">🔒 Admin Login</button>
+	    
         </div>
     </div>
 
@@ -112,6 +112,15 @@
                 alert("ভুল পাসওয়ার্ড!");
             }
         }
+	function checkJudgePassword() {
+    var password = prompt("বিচারক প্যানেলের পাসওয়ার্ড দিন:");
+    // এখানে আপনার পছন্দমতো পাসওয়ার্ড সেট করুন, আমি উদাহরণ হিসেবে '1234' দিলাম
+    if (password === "1234") { 
+        window.location.href = "judges_panel.html";
+    } else if (password != null) {
+        alert("ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিয়ে চেষ্টা করুন।");
+    }
+}
     </script>
 
 </body>
