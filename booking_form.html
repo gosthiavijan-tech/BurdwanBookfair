@@ -255,7 +255,9 @@
         <h3>৪. বিমা (Insurance)</h3>
         <div class="form-group">
             <label>Total valuation of stock (৫০০০ এর গুণিতকে)</label>
-            <input type="number" id="valuation" name="valuation" value="0" min="0" step="5000" oninput="calculateEverything()">
+            <input type="tel" id="valuation" name="valuation" value="0" 
+                   oninput="this.value = this.value.replace(/[^0-9]/g, ''); calculateEverything();"
+                   onblur="validateValuation()">
         </div>
         <div class="price-box" id="ins_res_box" style="display:none; background: #f1f8e9; border-color: #4caf50;">
             বিমা চার্জ (১০০০ এ ৩ টাকা): ₹ <span id="display_insurance_charge">0.00</span> /-
@@ -305,22 +307,21 @@
         areaSelect.innerHTML = "";
         if(!spec) return;
 
+        // টাইপিংয়ে বাধা না দেওয়ার জন্য সরাসরি value আপডেট না করে শর্ত সাপেক্ষে করা হলো
+        let currentVal = parseFloat(valuationInput.value) || 0;
+
         if (spec === "Book Stall") {
-            valuationInput.value = 10000;
-            valuationInput.min = 10000;
+            if(currentVal < 10000) valuationInput.value = 10000;
             bookTypeContainer.style.display = 'block';
             bookCategory.required = true;
         } 
         else if (spec === "Pavilion") {
-            valuationInput.value = 100000;
-            valuationInput.min = 100000;
+            if(currentVal < 100000) valuationInput.value = 100000;
             bookTypeContainer.style.display = 'none';
             bookCategory.required = false;
             bookCategory.value = "";
         } 
         else {
-            valuationInput.value = 0;
-            valuationInput.min = 0;
             bookTypeContainer.style.display = 'none';
             bookCategory.required = false;
             bookCategory.value = "";
@@ -343,6 +344,27 @@
         calculateEverything();
     }
 
+    // টাইপ শেষ করে অন্য ঘরে ক্লিক করলে ৫০০০ এর গুণিতক হবে
+    function validateValuation() {
+        let input = document.getElementById('valuation');
+        let spec = document.getElementById('stall_spec').value;
+        let val = parseFloat(input.value) || 0;
+        
+        // ন্যূনতম শর্ত
+        if (spec === "Book Stall" && val < 10000) val = 10000;
+        if (spec === "Pavilion" && val < 100000) val = 100000;
+
+        // ৫০০০ এর গুণিতক করা (যেমন ১২০০০ দিলে ১৫০০০ হবে)
+        if (val > 0) {
+            let rem = val % 5000;
+            if (rem !== 0) {
+                val = val + (5000 - rem);
+            }
+        }
+        input.value = val;
+        calculateEverything();
+    }
+
     function calculateEverything() {
         const specSelect = document.getElementById('stall_spec');
         const selectedSpec = specSelect.value;
@@ -351,11 +373,11 @@
         const valuationInput = document.getElementById('valuation');
 
         let val = parseFloat(valuationInput.value) || 0;
-        if (selectedSpec === "Book Stall" && val < 10000) {
-            val = 10000; valuationInput.value = 10000;
-        } else if (selectedSpec === "Pavilion" && val < 100000) {
-            val = 100000; valuationInput.value = 100000;
-        }
+        
+        // ক্যালকুলেশনের জন্য কার্যকর ভ্যালু ঠিক করা (ইউজারের টাইপিংয়ে ডিস্টার্ব না করে)
+        let effectiveVal = val;
+        if (selectedSpec === "Book Stall" && val < 10000) effectiveVal = 10000;
+        if (selectedSpec === "Pavilion" && val < 100000) effectiveVal = 100000;
 
         let stallTotal = (selectedSpec === "Book Stall" || selectedSpec === "Other Then Book") 
                          ? (baseRate / 100) * areaVal : baseRate * areaVal;
@@ -385,8 +407,9 @@
         document.getElementById('display_extra_total').innerText = extraTotal.toFixed(2);
         document.getElementById('hidden_total_extra').value = extraTotal.toFixed(2);
 
-        const insCharge = (val / 1000) * 3;
-        document.getElementById('ins_res_box').style.display = val > 0 ? 'block' : 'none';
+        // বিমা চার্জ
+        const insCharge = (effectiveVal / 1000) * 3;
+        document.getElementById('ins_res_box').style.display = effectiveVal > 0 ? 'block' : 'none';
         document.getElementById('display_insurance_charge').innerText = insCharge.toFixed(2);
         document.getElementById('hidden_insurance_amount').value = insCharge.toFixed(2);
 
@@ -404,15 +427,12 @@
         document.getElementById('hidden_form_id').value = formID;
         document.getElementById('hidden_trx_date').value = new Date().toLocaleDateString();
 
-        // --- নতুন লজিক: Area Text + Value একসাথে পাঠানো ---
         const areaSelect = document.getElementById('stall_area');
         const selectedAreaText = areaSelect.options[areaSelect.selectedIndex].text;
         const selectedAreaValue = areaSelect.value;
         
         const formData = new FormData(form);
-        // area_size ফিল্ডটি ওভাররাইট করছি
         formData.set('area_size', selectedAreaText + " - " + selectedAreaValue);
-        // ---------------------------------------------
 
         btn.disabled = true; btn.innerText = "অপেক্ষা করুন...";
 
