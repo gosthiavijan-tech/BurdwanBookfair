@@ -3,82 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>কালক্রম অনুযায়ী গুণীজন - বর্ধমান</title>
+    <title>গুণীজন - বর্ধমান</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f4f7f6; color: #333; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: #f0f2f5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header {
+            background: linear-gradient(rgba(26, 42, 108, 0.9), rgba(42, 72, 88, 0.9));
+            height: 100px; display: flex; justify-content: center; align-items: center;
+            color: white; border-bottom: 4px solid #ffcc00; flex-shrink: 0;
+        }
+
+        .main-layout { display: flex; flex: 1; max-width: 1400px; margin: 20px auto; width: 95%; gap: 20px; overflow: hidden; }
+
+        /* বাম পাশের মেনু */
+        .sidebar { 
+            width: 300px; background: white; padding: 20px; border-radius: 15px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; 
+            flex-shrink: 0; overflow-y: auto;
+        }
+
+        #btnContainer { display: flex; flex-direction: column; gap: 10px; }
+
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #1a2a6c; border-radius: 10px; }
+
+        .back-btn { 
+            background: #d63031; color: white !important; padding: 12px; 
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; 
+            text-align: center; text-decoration: none; margin-bottom: 15px; transition: 0.3s;
+            display: block; flex-shrink: 0;
+        }
+        .back-btn:hover { background: #1a2a6c; }
+
+        .author-btn { 
+            width: 100%; padding: 12px 15px; border: 2px solid #1a2a6c; border-radius: 10px; 
+            background: white; color: #1a2a6c; cursor: pointer; font-weight: 600; 
+            text-align: left; transition: 0.3s; display: block;
+        }
+        .author-btn.active { background: #1a2a6c; color: white; }
+        .author-btn:hover:not(.active) { background: #f0f2f5; }
+
+        /* ডান পাশের কন্টেন্ট */
+        .content-area { flex: 1; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow-y: auto; }
+        .author-detail { display: none; animation: fadeIn 0.5s; }
+        .author-detail.active { display: block; }
+
+        #loader { text-align: center; font-weight: bold; color: #1a2a6c; margin-top: 20px; }
+
+        /* কন্টেন্ট স্টাইল */
+        .author-title { color: #1a2a6c; font-size: 2.2rem; border-bottom: 3px solid #ffcc00; padding-bottom: 10px; margin-bottom: 25px; display: block; }
         
-        header { 
-            background: #27ae60; color: white; padding: 50px 20px; text-align: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        h1 { font-size: 2rem; margin-bottom: 10px; }
-        p.subtitle { opacity: 0.9; font-style: italic; }
-
-        .container { 
-            max-width: 800px; margin: 40px auto; padding: 20px; 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-        }
-
-        .era-card { 
-            background: white; padding: 40px 20px; text-align: center;
-            text-decoration: none; color: #2c3e50; border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 5px solid #27ae60;
-            transition: all 0.3s ease; display: flex; flex-direction: column; justify-content: center;
+        .bio-heading {
+            display: inline-block;
+            background: #1a2a6c;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 5px;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         }
 
-        .era-card:hover { 
-            transform: translateY(-10px); background: #e8f5e9; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+        .bio-text { font-size: 1.15rem; line-height: 1.9; color: #333; white-space: pre-line; text-align: justify; }
 
-        .era-card span.year { font-size: 1.4rem; font-weight: bold; color: #27ae60; display: block; margin-bottom: 10px; }
-        .era-card span.title { font-size: 1rem; color: #666; font-weight: 500; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .back-home { 
-            text-align: center; margin-top: auto; padding: 40px; 
-        }
-        .back-home a { color: #666; text-decoration: none; font-weight: bold; border-bottom: 1px solid #ccc; }
-
-        /* মোবাইল রেসপন্সিভ */
-        @media (max-width: 600px) {
-            .container { grid-template-columns: 1fr; }
-            header { padding: 30px 15px; }
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; overflow: auto; }
+            .sidebar { width: 100%; height: auto; max-height: 300px; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>বর্ধমানের স্মরণীয় গুণীজন</h1>
-    <p class="subtitle">ইতিহাসের পাতায় বর্ধমানের রত্নরা</p>
-</header>
+<header><h1>বর্ধমানের স্মরণীয় গুণীজন</h1></header>
 
-<div class="container">
-    <a href="era_1800_1900.html" class="era-card">
-        <span class="year">১৮০০ - ১৯০০</span>
-        <span class="title">রেনেসাঁ যুগ</span>
-    </a>
+<div class="main-layout">
+    <div class="sidebar" id="sidebarMenu">
+        <a href="index.html" class="back-btn">← ফিরে যান</a>
+        <div id="btnContainer"></div>
+    </div>
 
-    <a href="era_1900_1950.html" class="era-card">
-        <span class="year">১৯০০ - ১৯৫০</span>
-        <span class="title">বিপ্লবী ও আধুনিক যুগ</span>
-    </a>
-
-    <a href="era_1950_2000.html" class="era-card">
-        <span class="year">১৯৫০ - ২০০০</span>
-        <span class="title">আধুনিক সাহিত্য ও সংস্কৃতি</span>
-    </a>
-
-    <a href="era_2000_present.html" class="era-card">
-        <span class="year">২০০০ - বর্তমান</span>
-        <span class="title">সমকালীন সাহিত্য ও সমাজ</span>
-    </a>
+    <div class="content-area" id="contentArea">
+        <div id="loader"> তথ্য লোড হচ্ছে...</div>
+    </div>
 </div>
 
-<div class="back-home">
-    <a href="index.html">← মূল পাতায় ফিরে যান</a>
-</div>
+<script>
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbzwrjLyx9-XqucuEI3_AipXXtDoFCjUelmCCxti53UZ8XpWnxBo_RIGP9mDUGwndVF32w/exec';
+
+    // হেডিং ফরম্যাট করার ফাংশন
+    function formatBiography(bio) {
+        if (!bio) return "";
+        const headings = [
+            "জন্ম ও পরিচয়", "শিক্ষাজীবন", "কর্মজীবন", "পুরস্কার ও সম্মাননা",
+            "সাহিত্যকৃতি", "উল্লেখযোগ্য কাজ","জীবনাবসান", "ব্যক্তিগত জীবন","বিপ্লবী কর্মকাণ্ড :","উল্লেখযোগ্য এবং ঐতিহাসিক গুরুত্বপূর্ণ বইটি হলো:","সহযোদ্ধাদের কথা:","অন্যান্য প্রতিভা:" ,"সংগীতের ঘরানা:","সুরকার হিসেবে অবদান:","শিক্ষা ও জন্ম:"
+        ];
+
+        let formatted = bio;
+        headings.forEach(h => {
+            // কোলন (:), বিসর্গ (ঃ) বা শুধু স্পেস থাকলেও যেন কাজ করে
+            const regex = new RegExp(`(${h})[:ঃ\\s]*`, 'g');
+            formatted = formatted.replace(regex, `<span class="bio-heading">$1</span><br>`);
+        });
+        return formatted;
+    }
+
+    async function fetchAuthors() {
+        try {
+            const response = await fetch(scriptUrl);
+            const data = await response.json();
+            renderAuthors(data);
+        } catch (error) {
+            document.getElementById('loader').innerText = 'তথ্য লোড করতে ব্যর্থ হয়েছে।';
+            console.error(error);
+        }
+    }
+
+    function renderAuthors(authors) {
+        const btnContainer = document.getElementById('btnContainer');
+        const contentArea = document.getElementById('contentArea');
+        btnContainer.innerHTML = '';
+        contentArea.innerHTML = '';
+
+        authors.forEach((author, index) => {
+            // বাটন তৈরি
+            const btn = document.createElement('button');
+            btn.className = 'author-btn' + (index === 0 ? ' active' : '');
+            btn.innerText = author.name;
+            btn.onclick = (e) => showAuthor(e, 'auth' + index);
+            btnContainer.appendChild(btn);
+
+            // কন্টেন্ট তৈরি
+            const detail = document.createElement('div');
+            detail.id = 'auth' + index;
+            detail.className = 'author-detail' + (index === 0 ? ' active' : '');
+            
+            // ডাটা ফরম্যাট করা হচ্ছে
+            const finalBio = formatBiography(author.bio);
+
+            detail.innerHTML = `
+                <h2 class="author-title">${author.name}</h2>
+                <div class="bio-text">${finalBio}</div>
+            `;
+            contentArea.appendChild(detail);
+        });
+    }
+
+    function showAuthor(evt, id) {
+        document.querySelectorAll('.author-detail').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.author-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        evt.currentTarget.classList.add('active');
+        
+        if (window.innerWidth <= 768) {
+            document.getElementById('contentArea').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    window.onload = fetchAuthors;
+</script>
 
 </body>
 </html>
