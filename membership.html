@@ -74,7 +74,7 @@
             <div style="text-align:center; padding:15px; border:2px dashed #ddd; border-radius:10px; margin-bottom: 15px; background: #fff;">
                 <p style="font-size:12px; color:#666;">QR কোড স্ক্যান করুন অথবা নিচের বাটনে ক্লিক করুন</p>
                 <img id="qrImg" src="" alt="QR" style="margin-bottom: 10px; width: 150px;">
-                <p><b>UPI: 8016957008@upi</b></p>
+                <p><b>UPI: 9932250609m@pnb</b></p>
                 <a id="mobilePayBtn" href="#" class="btn-block btn-primary" style="background: #1e3799;">📲 সরাসরি পেমেন্ট অ্যাপ থেকে পে করুন</a>
             </div>
             <input type="text" id="trxIdInput" placeholder="Transaction ID (TrxID) দিন">
@@ -136,7 +136,7 @@
                 resDiv.innerHTML = "<p style='color:red;'>দুঃখিত, এই আইডি পাওয়া যায়নি!</p>";
             } else {
                 const amount = currentMember.dueYears * 200;
-                const upiLink = `upi://pay?pa=8016957008@upi&pn=Bardhaman%20Abhijan%20Gosthi&am=${amount}&cu=INR`;
+                const upiLink = `upi://pay?pa=9932250609m@pnb&pn=Bardhaman%20Abhijan%20Gosthi&am=${amount}&cu=INR`;
                 
                 // সেট QR এবং পেমেন্ট বাটন
                 document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiLink)}`;
