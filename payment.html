@@ -47,7 +47,7 @@
                     মোবাইল অ্যাপ দিয়ে পেমেন্ট করুন
                 </a>
             </div>
-            <p style="margin-bottom:0; font-size:14px;">UPI ID: <strong>8016957008@upi</strong></p>
+            <p style="margin-bottom:0; font-size:14px;">UPI ID: <strong>9932250609m@pnb</strong></p>
         </div>
 
         <div class="form-group">
@@ -128,7 +128,7 @@
     }
 
     function updateQR(amt) {
-        const upiUri = `upi://pay?pa=8016957008@upi&pn=BardhamanBookFair&am=${amt}&cu=INR`;
+        const upiUri = `upi://pay?pa=9932250609m@pnb&pn=BardhamanBookFair&am=${amt}&cu=INR`;
         qrcode.makeCode(upiUri);
         const payLink = document.getElementById('upi_pay_link');
         payLink.href = upiUri;
